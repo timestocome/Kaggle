@@ -17,15 +17,11 @@ import pickle
 
 # easier to read in csv and store as pickle file, only need to do this once
 # submission.pkl is the validation data whose answers we'll submit to kaggle
+#
 # break the training.csv file into training and testing data
 #
 # can reshuffle testing and training data by re-running this function or change
 # sizes of test/train. 
-
- ################################################
-   # need to store data as tuples with two entries
-   # data[0] = np.ndarray with each entry being a  784 ndarray describing the images
-   # data[1] = ndarray with each entry being a single digit label
 def csv_to_pickle():
    
    # validation data to submit to Kaggle
@@ -45,7 +41,7 @@ def csv_to_pickle():
    testing_labels = testing[:, 0]
    validation_labels = validation[:, 0]
    training_labels = training[:,0]
-   kaggle_labels = np.zeros(28000)          # placeholder to keep data types all the same
+   kaggle_labels = np.zeros(28000)          # placeholder to keep data groups all in same format
     
    # grab image data arrays of 784
    testing_images = testing[:, 0:784]
@@ -83,14 +79,14 @@ def csv_to_pickle():
    pickle.dump(kaggle_data, pickle_out)
    pickle_out.close()
    
-    
-csv_to_pickle()
+
+# uncomment line below to convert the csv files into pickle files    
+#csv_to_pickle()
 
 
-# load up data from file
-# file was created in python 2, using encoding-'latin-1' fixes a compatibility 
-# problem with opening it with python 3. idk, but it works.
 
+
+# load up data from pkl file
 def load_data():
    
     file = 'train.pkl'
@@ -113,8 +109,8 @@ def load_data():
         f.close()      
     validate = list(validation_data) 
      
-    ###########################################################################
-    # not returning this yet, may just grab it in a separate submission class later    
+     
+    # kaggle validation data
     file = 'submission.pkl'
     with open(file, 'rb') as f:
         kaggle = pickle.load(f)
@@ -123,10 +119,10 @@ def load_data():
         
     return (training, validate, testing, kaggle)
     
-load_data()   
+
    
     
-# re-shape data
+# re-shape data to match network requirements
 def load_data_wrapper():
     tr_d, va_d, te_d, ka_d = load_data()
      
@@ -144,7 +140,7 @@ def load_data_wrapper():
     
     ka_i, ka_l = zip(*ka_d)
     ka_image = np.asarray(ka_i)
-    #ka_label = np.asarray(ka_l)
+    ka_label = np.asarray(ka_l)
   
    
     training_inputs = [np.reshape(x, (784, 1)) for x in tr_image]
@@ -167,18 +163,18 @@ def load_data_wrapper():
     
     
 
-
-
-
 # convert 0-9 labels to 10 zero arrays with a 1 in the correct position
 def vectorized_result(j):
     
     e = np.zeros((10, 1))
     e[j] = 1.0
     return e
+
+
     
-    
+
+# read in data    
 training_data, validation_data, test_data, kaggle_data = load_data()
-#load_data_wrapper()
+
 
 

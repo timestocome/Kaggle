@@ -7,10 +7,9 @@
 ##################################################################################
 ##################################################################################
 # to do
-# save and reload network
-# run test, validation data through network after training
-# need some better stats - break training into training, testing, validation files
-# create submission files for Kaggle
+# improve network
+# maybe better stats and some graphical output
+
 
 
 
@@ -27,17 +26,18 @@ import MultiLayer
 # create the network
 net = MultiLayer.Network([784, 30, 30, 10])  # layer sizes ( input, hidden, output )
 
-epochs = 40        # number of passes through full data set
+epochs = 40         # number of passes through full data set
 batch_size = 10     # size of batches, network updated once per batch
 alpha = 0.5         # learning step
 lmbda = 3.0         # regularization 
 net.sgd(training_data, epochs, batch_size, alpha, lmbda, test_data=test_data) # train epochs, batch size, alpha
 
 
-# run validation and kaggle data through network
+# run validation data through network
 validation_results = net.process_data(validation_data)
 print(validation_results)
 
-# create csv submission file for kaggle
+
+# run kaggle submission images through net and create csv submission file for kaggle
 net.create_submission_data(kaggle_data)
 

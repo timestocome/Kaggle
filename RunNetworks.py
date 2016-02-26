@@ -24,18 +24,18 @@ training_data, validation_data, test_data, kaggle_data = LoadData.load_data_wrap
 import MultiLayer
 
 # create the network
-net = MultiLayer.Network([784, 196, 49, 20, 10])  # layer sizes ( input, hidden, output )
+net = MultiLayer.Network([784, 80, 40, 20, 10])  # layer sizes ( input, hidden, output )
 
 epochs = 60         # number of passes through full data set
 batch_size = 10     # size of batches, network updated once per batch
-alpha = 0.2         # learning step
-lmbda = 6.0         # regularization 
+alpha = 0.3         # learning step
+lmbda = 3.0         # regularization 
 net.sgd(training_data, epochs, batch_size, alpha, lmbda, test_data=test_data) # train epochs, batch size, alpha
 
 
 # run validation data through network
 validation_results = net.process_data(validation_data)
-print(validation_results)
+print("Validation results {0}%".format(validation_results / 10.0))
 
 
 # run kaggle submission images through net and create csv submission file for kaggle

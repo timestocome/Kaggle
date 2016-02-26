@@ -36,11 +36,13 @@ class Network(object):
         # this settles the network down quicker but doesn't change accuracy
         self.weights = [np.random.randn(y, x)/np.sqrt(x) for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
-    
-    # basic cost function actual - expected
+   
+    # error to push back
     def cost (self, a, y):
-        return (a - y)
-        
+        #return (a - y)         # simple error actual - expected
+        return 0.5 * np.linalg.norm(a-y)**2     # quadratic cost
+        #return np.sum(np.nan_to_num(-y * np.log(a) - (1-y)*np.log(1-a)))    # cross entropy cost
+       
         
     # grab total number of correct results
     def evaluate(self, test_data):
@@ -115,8 +117,9 @@ class Network(object):
     # update weights and biases using gradient descent on a single batch
     # eta is the learning rate
     # nabla == gradient for this batch
-    def update_mini_batch(self, mini_batch, eta, lmbda, n):
-     
+    def update_mini_batch(self, mini_batch, alpha, lmbda, n):
+    
+        
         # temporary storage 
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
@@ -128,9 +131,8 @@ class Network(object):
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
             
         # adjust the weights and biases 
-        self.weights = [(1 - eta * (lmbda/n)) * w - (eta/len(mini_batch)) * nw for w, nw in zip(self.weights, nabla_w) ]
-        self.biases = [b - (eta / len(mini_batch)) * nb for b, nb in zip(self.biases, nabla_b)]
-        
+        self.weights = [(1 - alpha * (lmbda/n)) * w - (alpha/len(mini_batch)) * nw for w, nw in zip(self.weights, nabla_w) ]
+        self.biases = [b - (alpha / len(mini_batch)) * nb for b, nb in zip(self.biases, nabla_b)]
         
         
         
@@ -156,8 +158,8 @@ class Network(object):
             
         # push errors backwards through the network
         # output layer error equation - matrix form of partial derivative of cost function
-        #delta = self.cost(activations[-1], y) * sigmoid_prime(zs[-1])      # quadratic
-        delta = self.cost(activations[-1], y)                               # cross entropy
+        delta = self.cost(activations[-1], y) * (activations[-1] - y) * sigmoid_prime(zs[-1])      # quadratic
+        #delta = self.cost(activations[-1], y)                               # cross entropy
 
 
         nabla_b[-1] = delta                 # amount to change biases
@@ -176,4 +178,3 @@ class Network(object):
         # send back the adjustments    
         return ( nabla_b, nabla_w )
         
-       

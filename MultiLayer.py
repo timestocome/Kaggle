@@ -21,8 +21,7 @@ def sigmoid(z):
 def sigmoid_prime(z):
     return sigmoid(z) * (1 - sigmoid(z))
         
-
- 
+       
 
 class Network(object):
         
@@ -36,14 +35,9 @@ class Network(object):
         # this settles the network down quicker but doesn't change accuracy
         self.weights = [np.random.randn(y, x)/np.sqrt(x) for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
-   
-    # error to push back
-    def cost (self, a, y):
-        #return (a - y)         # simple error actual - expected
-        return 0.5 * np.linalg.norm(a-y)**2     # quadratic cost
-        #return np.sum(np.nan_to_num(-y * np.log(a) - (1-y)*np.log(1-a)))    # cross entropy cost
-       
+     
         
+   
     # grab total number of correct results
     def evaluate(self, test_data):
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data] 
@@ -119,62 +113,75 @@ class Network(object):
     # nabla == gradient for this batch
     def update_mini_batch(self, mini_batch, alpha, lmbda, n):
     
+        # misc
+        batch_size = len(mini_batch)
         
         # temporary storage 
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        new_b = [np.zeros(b.shape) for b in self.biases]
+        new_w = [np.zeros(w.shape) for w in self.weights]
          
         # calculate the adjustment to the weights and biases 
         for x, y in mini_batch:
-            delta_nabla_b, delta_nabla_w = self.backprop(x, y)   # obtain partial derivatives
-            nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+            delta_b, delta_w = self.backprop(x, y)        # adjustments to weights and bias
+            new_b = [nb + dnb for nb, dnb in zip(new_b, delta_b)]
+            new_w = [nw + dnw for nw, dnw in zip(new_w, delta_w)]
             
         # adjust the weights and biases 
-        self.weights = [(1 - alpha * (lmbda/n)) * w - (alpha/len(mini_batch)) * nw for w, nw in zip(self.weights, nabla_w) ]
-        self.biases = [b - (alpha / len(mini_batch)) * nb for b, nb in zip(self.biases, nabla_b)]
+        #self.weights = [w - alpha/batch_size * nw for w, nw in zip(self.weights, new_w) ]  # no regularization
+        self.weights = [(1 - lmbda/batch_size) * w - alpha/batch_size * nw for w, nw in zip(self.weights, new_w) ]  # add regularization
+        
+        # b - (alpha/batch_size * nb)
+        self.biases = [b - alpha/batch_size * nb for b, nb in zip(self.biases, new_b)]
+        
+       
+        
+        
+        
+        
         
         
         
     # returns the gradient for the cost function
-    # nabla_ contains a list of arrays, one per layer
+
     def backprop(self, x, y):
         
         # temporary storage
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        adjust_b = [np.zeros(b.shape) for b in self.biases]
+        adjust_w = [np.zeros(w.shape) for w in self.weights]
         activation = x
-        activations = [x]   # store neurode input-output
-        zs = [] 
+        activations = [x]   # store layer by layer lists of neurode outputs
+        zs = []             # store layer by layer list of weighted inputs
         
         
-        # push inputs through the network 
+        # feedforward --- push inputs through network
         for b, w, in zip(self.biases, self.weights):
             z = np.dot(w, activation) + b   # weights * input + b  i.e. 'weighted input'
-            zs.append(z)                    # store the output
+            zs.append(z)                    # store z
             activation = sigmoid(z)         # run output through sigmoid function    
             activations.append(activation)  # store output for next layer
             
             
         # push errors backwards through the network
-        # output layer error equation - matrix form of partial derivative of cost function
-        delta = self.cost(activations[-1], y) * (activations[-1] - y) * sigmoid_prime(zs[-1])      # quadratic
-        #delta = self.cost(activations[-1], y)                               # cross entropy
+        # error between expected and actual
+        delta = (activations[-1] - y) * sigmoid_prime(zs[-1])  # regular loss function
 
-
-        nabla_b[-1] = delta                 # amount to change biases
-        nabla_w[-1] = np.dot(delta, activations[-2].transpose())  # amount to change weights ( error * output)
+        
+        
+        
+        
+        adjust_b[-1] = delta                                      # the output error
+        adjust_w[-1] = np.dot(delta, activations[-2].transpose())  # error * output
         
         
         # for each layer work backwards
-        for l in range(2, self.num_layers):
-            z = zs[-l]                  
-            sp = sigmoid_prime(z)           # run sum of weights * input + bias through sigmoid 
-            delta = np.dot(self.weights[-l + 1].transpose(), delta) * sp # calculate the adjustment
-            nabla_b[-l] = delta             # amount to adjust bias
-            nabla_w[-l] = np.dot(delta, activations[-l - 1].transpose()) # amount to adjust weights
+        for l in range(2, self.num_layers):     # l = 2 is 2nd to last layer
+            z = zs[-l]                          # previous layer output            
+            derivative = sigmoid_prime(z)       # derivative of previous layer's output
+            delta = np.dot(self.weights[-l + 1].transpose(), delta) * derivative # weights dotted with error * derivative
+            adjust_b[-l] = delta                # amount to adjust bias
+            adjust_w[-l] = np.dot(delta, activations[-l - 1].transpose()) # amount to adjust weights
             
             
         # send back the adjustments    
-        return ( nabla_b, nabla_w )
+        return ( adjust_b, adjust_w )
         

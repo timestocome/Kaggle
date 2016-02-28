@@ -24,12 +24,12 @@ training_data, validation_data, test_data, kaggle_data = LoadData.load_data_wrap
 import MultiLayer
 
 # create the network
-net = MultiLayer.Network([784, 80, 40, 20, 10])  # layer sizes ( input, hidden, output )
+net = MultiLayer.Network([784, 120, 60, 10])  # layer sizes ( input, hidden, output )
 
-epochs = 60         # number of passes through full data set
-batch_size = 10     # size of batches, network updated once per batch
-alpha = 0.3         # learning step
-lmbda = 3.0         # regularization 
+epochs = 30         # number of passes through full data set
+batch_size = 5     # size of batches, network updated once per batch
+alpha = 1.2         # learning step
+lmbda =  0.00005        # regularization 
 net.sgd(training_data, epochs, batch_size, alpha, lmbda, test_data=test_data) # train epochs, batch size, alpha
 
 

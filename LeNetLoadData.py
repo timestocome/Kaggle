@@ -1,5 +1,7 @@
 #!/python
 
+#!/python
+
 
 import numpy as np
 import pandas as pd
@@ -26,7 +28,7 @@ def csv_to_pickle():
    
    # validation data to submit to Kaggle
    k = pd.read_csv('test.csv')
-   kaggle = k.as_matrix()
+
    
    # training data - need to break this into training, testing, validation
    data = pd.read_csv('train.csv')
@@ -36,19 +38,24 @@ def csv_to_pickle():
    testing = (data[0:1000]).as_matrix()
    validation = (data[1000:2000]).as_matrix()
    training = (data[2000:42000]).as_matrix()
+   kaggle = k.as_matrix()
+   
    
    # grab labels
    testing_labels = testing[:, 0]
    validation_labels = validation[:, 0]
    training_labels = training[:,0]
-   kaggle_labels = np.zeros(28000)          # placeholder to keep data groups all in same format
+   kaggle_labels = np.zeros((28000), dtype=np.int)          # placeholder to keep data groups all in same format
+    
+
     
    # grab image data arrays of 784
    testing_images = testing[:, 0:784]
    validation_images = validation[:, 0:784]
    training_images = training[:, 0:784]
-   kaggle_images = kaggle[:,:]
+   kaggle_images = kaggle[:, 0:784]
     
+
 
    # convert image data from 0-255 ints to 0.0-1.0 floats
    testing_images = testing_images / 255.0
@@ -142,26 +149,11 @@ def load_data_wrapper():
     ka_image = np.asarray(ka_i)
     ka_label = np.asarray(ka_l)
   
-    
-    training_inputs = [np.reshape(x, (784, 1)) for x in tr_image]
-    training_results = [vectorized_result(y) for y in tr_label]
-    training_data = zip(training_inputs, training_results)
-    
-    validation_inputs = [np.reshape(x, (784, 1)) for x in va_image]
-    validation_data = zip(validation_inputs, va_label)
-    
-    test_inputs = [np.reshape(x, (784, 1)) for x in te_image]
-    test_data = zip(test_inputs, te_label)
-    
-    kaggle_inputs = [np.reshape(x, (784, 1)) for x in ka_image]
-    kaggle_data = kaggle_inputs
-    
-    
+   
     
     
     training_inputs = [np.reshape(x, (784)) for x in tr_image]
-    training_results = [vectorized_result(y) for y in tr_label]
-    training_data = zip(training_inputs, training_results)
+    training_data = zip(training_inputs, tr_label)
     
     validation_inputs = [np.reshape(x, (784)) for x in va_image]
     validation_data = zip(validation_inputs, va_label)
@@ -170,7 +162,7 @@ def load_data_wrapper():
     test_data = zip(test_inputs, te_label)
     
     kaggle_inputs = [np.reshape(x, (784)) for x in ka_image]
-    kaggle_data = kaggle_inputs
+    kaggle_data = zip(kaggle_inputs, ka_label)
     
     return (training_data, validation_data, test_data, kaggle_data)
    
@@ -178,16 +170,6 @@ def load_data_wrapper():
     
     
 
-# convert 0-9 labels to 10 zero arrays with a 1 in the correct position
-def vectorized_result(j):
-
-
-    e = np.zeros((10, 1))
-    e[j] = 1.0
-    return e
-
-
-    
 
 # read in data    
 training_data, validation_data, test_data, kaggle_data = load_data()

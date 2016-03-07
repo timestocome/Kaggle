@@ -12,19 +12,15 @@ import random
 
 import theano
 import theano.tensor as T
-from theano.tensor.nnet import conv2d
+from theano.tensor.nnet import conv2d, sigmoid
 from theano.tensor.signal import downsample
 
 
 
 #########################################
 # to do 
-# save/load weights/biases using pickle
-# print parameters, scoring to text file
-# streamline code
-# adjust parameters
-# fill in comments
-
+# ? add drop out
+# original leNet5 has two hidden layers - add one in?
 
 
 
@@ -32,29 +28,42 @@ from theano.tensor.signal import downsample
 
 #################################################################################################
 # LeNet5 http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
+# input 32 * 32
+# conv maps 6 @ 28x28
+# pool 2,2
+# conv maps 16 @ 10x10
+# pool 2,2
+# hidden 120
+# hidden 84
+# output 10
 #################################################################################################
 
 #################################################################################################
 # parameters to tweak 
 
-learning_rate = 0.1     # how fast does net converge - bounce out of local mins
-                        # 0.01 ~ 90% accuracy, 0.1 ~ 92%. 1.0 drops accuracy to 75%, 0.5 ~ 94%
-L1_reg = 0.0000         # lambda - scaling factor for regularizations, slightly better accuracy
-L2_reg = 0.0001         #     with L2 than L1 
-n_epochs = 10          # max number of times we loop through full training set
-batch_size = 50        # number of training examples per batch - smaller is slower but better accuracy( above 20)
-n_hidden = 100          # number of nodes in hidden layer increasing or decreasing from 100 slowly drops accuracy
+learning_rate = 0.08     # how fast does net converge - bounce out of local mins
+                         # makes a noticeable difference in accuracy
+                        
+L2_reg = 0.01            # lambda - scaling factor for regularization term
 
-n_kerns = [20, 50]      # number of kernels per layer [ 1st layer, 2nd layer, ...]
+n_epochs = 100           # max number of times we loop through full training set
+batch_size = 10          # number of training examples per batch - smaller is slower but better accuracy( above 20)
+
+n_kerns = [24, 48]       # number of kernels per layer [ 1st layer, 2nd layer]
+n_hidden = 200           # hidden layer size
+
 
 rng = np.random.RandomState(42)     # seed for random
 validation_frequency = 10   # how often to check validation set
+
+# using tanh performs slightly better than sigmoid
 #################################################################################################
 # load up data 
-# MNIST dataset, images are 28x28 images, 0.0-1.0 0 being blank, 1.0 darkest mark on image
+# Kaggle subset of MNIST dataset, images are 28x28 images, 0.0-1.0 0 being blank, 1.0 darkest mark on image
 # labels are single ints 0-9
-# training set is 50,000 images and labels
-# testing and validation sets are 10,000 images and labels each
+# training set is 40,000 images and labels
+# testing and validation sets are 1,000 images and labels each
+# submission set is 28,000
 ##################################################################################################
 
 
@@ -106,6 +115,8 @@ class HiddenLayer(object):
     # W = weights
     # b = bias
     def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
+    #def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=sigmoid):
+     
         
         self.input = input
         
@@ -117,7 +128,7 @@ class HiddenLayer(object):
                                     size = (n_in, n_out)
                                     ), dtype = theano.config.floatX)
             if activation == theano.tensor.nnet.sigmoid:
-                W_values *= 4.
+                    W_values *= 4.
             W = theano.shared(value = W_values, name = 'W', borrow = True)
             
         if b is None:
@@ -134,7 +145,8 @@ class HiddenLayer(object):
         # update weights and bias
         self.params = [self.W, self.b]
         
-        
+    def regularization(self):
+        return (L1_reg * abs(self.W).sum()) + (L2_reg * abs(self.W **2).sum())     
    
      
 ##########################################################################################
@@ -149,16 +161,16 @@ class LogisticRegression(object):
         self.W = theano.shared(value=np.zeros((n_in, n_out), dtype=theano.config.floatX), name='W', borrow=True)
         self.b = theano.shared(value=np.zeros((n_out,), dtype=theano.config.floatX), name='b', borrow=True)
    
-        # map input to hyperplane to determine output
+        # map between 0-1 so each output is a probability - makes training easier
         self.p_y_given_x = T.nnet.softmax(T.dot(input, self.W) + self.b)
    
-        # compute predicted class
+        # compute predicted class - index of largest value
         self.y_predict = T.argmax(self.p_y_given_x, axis=1)
    
         self.params = [self.W, self.b]
         self.input = input
    
-
+        
 
     # using mean instead of sum allows for different batch sizes with out adjusting learning rate
     def negative_log_likelihood(self, y):
@@ -169,10 +181,8 @@ class LogisticRegression(object):
     def errors(self, y):
         return T.mean(T.neq(self.y_predict, y))
     
-    #def predictions(self, y):
-    #    return T.argmax(self.p_y_given_x, axis=1) 
-     
-     
+   
+   
    
 ##########################################################################################
 # LeNetConvPoolLayer
@@ -270,14 +280,18 @@ def evaluate_lenet5():
     # fully connected sigmoid layer
     layer2 = HiddenLayer (rng, input = layer2_input, 
                             n_in = n_kerns[1] * 4 * 4,
-                            n_out = 500,
+                            n_out = n_hidden,
                             activation = T.tanh )
                             
     # classify values of sigmoid layer
-    layer3 = LogisticRegression(input = layer2.output, n_in = 500, n_out = 10)
+    layer3 = LogisticRegression(input = layer2.output, n_in = n_hidden, n_out = 10)
+    
+    
+    # regularization
+    regularization =  0.5 * L2_reg * sum([(layer2.W**2).sum()]) 
     
     # negative_log_likelihood cost
-    cost = layer3.negative_log_likelihood(y)
+    cost = layer3.negative_log_likelihood(y) + regularization
     
     # compute errors
     test_model = theano.function( [index], layer3.errors(y), 
@@ -320,13 +334,13 @@ def evaluate_lenet5():
     improvement_threshold = 0.995   # min improvement to consider
 
     best_validation_loss = np.inf
-    best_iter = 0
+    best_epoch = 0
     test_score = 0.
     start_time = timeit.default_timer()
     epoch = 0
     done_looping = False
     
-    while (epoch < n_epochs) and (not done_looping):
+    while (epoch < n_epochs): # and (not done_looping):   let's let it run a bit longer
     
         epoch = epoch + 1
         
@@ -354,7 +368,7 @@ def evaluate_lenet5():
 
                     # update best scores
                     best_validation_loss = this_validation_loss
-                    best_iter = iter
+                    best_epoch = epoch
                     
                     # test on test set
                     test_losses = [test_model(i) for i in range(n_test_batches)]
@@ -370,16 +384,20 @@ def evaluate_lenet5():
                     break
                     
     end_time = timeit.default_timer()
-    print("Optimization complete")
+    
+    print("***************************************************************************************")
+    print("........................Optimization complete..........................................")
     print("Best validation score of %f %% obtained at iteration %i with test score of %f %%" %
-                        (100.0 - best_validation_loss * 100., best_iter + 1, 100.0 - test_score * 100.))
-    print(("The code for the file " + os.path.split(__file__)[1] + " ran for %.2fm" % ((end_time - start_time)/60.)), file=sys.stderr)
+                        (100.0 - best_validation_loss * 100., best_epoch, 100.0 - test_score * 100.))
+    print("Total runtime: %.2f " % ((end_time - start_time)/60.))
+    print("........................................................................................")
     
     
     ######  print to text file as well ##############
     run_file = open('LeNet5_lastRun.txt', 'w')
     run_file.write("Best validation score of %f %% obtained at iteration %i with test score of %f %%" %
-                        (best_validation_loss * 100., best_iter + 1, test_score * 100.))
+                        (best_validation_loss * 100., best_epoch, test_score * 100.))
+    run_file.write("Total runtime: %.2f " % ((end_time - start_time)/60.))
     run_file.close()
     
     
@@ -395,10 +413,9 @@ def evaluate_lenet5():
     test_array = np.asarray(test_results)
 
     test_array = test_array.flatten()
-    print(len(test_array))
-    print(test_array)
     
-   # save results to disk
+    
+   # save kaggle submission to disk
     np.savetxt('kaggle_leNet_results.csv', 
                         np.c_[range(1,len(test_array)+1),test_array], 
                         delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')

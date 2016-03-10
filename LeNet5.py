@@ -359,18 +359,15 @@ def evaluate_lenet5():
         for minibatch_index in range(n_train_batches):
             iter = (epoch - 1) * n_train_batches + minibatch_index
             
-           
-                
             cost_ij = train_model(minibatch_index)
                  
             # compute zero one loss on validation set
             validation_losses = [validate_model(i) for i in range(n_valid_batches)]
             this_validation_loss = np.mean(validation_losses)
-            #print('epoch %i, minibatch %i/%i, validation %f %%' %(epoch, minibatch_index + 1, n_train_batches, 100.0 - this_validation_loss * 100.))
                 
             if iter % 100 == 0:
                 print ('training iteration: ', iter)    
-                print ("validation loss: ", 100.0 - this_validation_loss * 100.0 )
+                print ("validation accuracy: ", 100.0 - this_validation_loss * 100.0 )
                 
             # if best score to date
             if this_validation_loss < best_validation_loss:
@@ -385,7 +382,7 @@ def evaluate_lenet5():
                 print(('****************** epoch %i, minibatch %i/%i, test score of best model %f %%') % (epoch, minibatch_index + 1, n_train_batches, 100.0 - test_score * 100.))
                     
                 correct = 100.0 - 100.0 * test_score    
-                if correct > 99.6:
+                if correct > 99.6:          # last best score + 0.2%
                     break 
                    
                  
@@ -405,7 +402,7 @@ def evaluate_lenet5():
     ######  print to text file as well ##############
     run_file = open('LeNet5_lastRun.txt', 'w')
     run_file.write("Best validation score of %f %% obtained at iteration %i with test score of %f %%" %
-                        (best_validation_loss * 100., best_epoch, test_score * 100.))
+                        (100.0 - best_validation_loss * 100., best_epoch, 100.0 - test_score * 100.))
     run_file.write("Total runtime: %.2f " % ((end_time - start_time)/60.))
     run_file.close()
     

@@ -16,11 +16,25 @@ from theano.tensor.nnet import conv2d, sigmoid
 from theano.tensor.signal import downsample
 
 
+GPU = True
+if GPU:
+    print ("Trying to run under a GPU. ")
+    try: theano.config.device = 'gpu'
+    except: pass # it's already set
+    theano.config.floatX = 'float32'
+else:
+    print ("Running with a CPU. ")
+        
+        
 
 #########################################
 # to do 
 # ? add drop out
 # original leNet5 has two hidden layers - add one in?
+
+# meh - best kaggle score was .94971 with this net before typo found
+# so it was 95% with only about 10% of the data used for training
+# fixed typo - now training on full set, best score .98771  (tanh)
 
 
 
@@ -41,24 +55,30 @@ from theano.tensor.signal import downsample
 #################################################################################################
 # parameters to tweak 
 
-learning_rate = 0.08     # how fast does net converge - bounce out of local mins
+learning_rate = 0.1      # how fast does net converge - bounce out of local mins
                          # makes a noticeable difference in accuracy
                         
-L2_reg = 0.01            # lambda - scaling factor for regularization term
+L2_reg = 0.001            # lambda - scaling factor for regularization term
 
-n_epochs = 100           # max number of times we loop through full training set
-batch_size = 10          # number of training examples per batch - smaller is slower but better accuracy( above 20)
+n_epochs = 3            # max number of times we loop through full training set
+batch_size = 50          # number of training examples per batch - smaller is slower but better accuracy( above 20)
 
-n_kerns = [24, 48]       # number of kernels per layer [ 1st layer, 2nd layer]
-n_hidden = 200           # hidden layer size
+n_kerns = [30, 60]       # number of kernels per layer [ 1st layer, 2nd layer]
+n_hidden = 120           # hidden layer size
 
 
-rng = np.random.RandomState(42)     # seed for random
-validation_frequency = 10   # how often to check validation set
+rng = np.random.RandomState(27)             # seed for random
 
-# using tanh performs slightly better than sigmoid
+
+def ReLU(z): return T.maximum(0.0, z)       # ReLU is supposed to be the best for image recognition networks
+#activation_function = ReLU                  # T.tanh, T.nnet.sigmoid are also possible, T.tanh works better than sigmoid
+activation_function = T.tanh
+
+
+initial_weight_scale = 6.0                  # 1.0 for ReLU, 6. for tanh, 24. for sigmoid
 #################################################################################################
 # load up data 
+
 # Kaggle subset of MNIST dataset, images are 28x28 images, 0.0-1.0 0 being blank, 1.0 darkest mark on image
 # labels are single ints 0-9
 # training set is 40,000 images and labels
@@ -93,13 +113,14 @@ kaggle_set_x, kaggle_set_y = shared_dataset(kaggle_set)
     
 # set up constants
 # double front slash (//) divide and round down to floor
-n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size         # 40,000
+n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size         # 40,000 or 200,000
 n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] // batch_size         #  1,000
 n_test_batches = test_set_x.get_value(borrow=True).shape[0] // batch_size           #  1,000
 n_kaggle_batches = kaggle_set_x.get_value(borrow=True).shape[0] // batch_size       # 28,000
 
 
-    
+##########################################################################################
+
               
 ##########################################################################################
 # Hidden Layer 
@@ -114,21 +135,17 @@ class HiddenLayer(object):
     # activation can be T.tanh or T.nnet.sigmoid
     # W = weights
     # b = bias
-    def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
-    #def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=sigmoid):
-     
+    def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=activation_function):
         
         self.input = input
         
         # initial weights sqrt( +/-6. / (n_in + n_hidden)), multiply by 4 for sigmoid
         if W is None:
             W_values = np.asarray(rng.uniform(
-                                    low = -np.sqrt(6./(n_in + n_out)),
-                                    high = np.sqrt(6. /(n_in + n_out)),
+                                    low = -np.sqrt(initial_weight_scale/(n_in + n_out)),
+                                    high = np.sqrt(initial_weight_scale/(n_in + n_out)),
                                     size = (n_in, n_out)
                                     ), dtype = theano.config.floatX)
-            if activation == theano.tensor.nnet.sigmoid:
-                    W_values *= 4.
             W = theano.shared(value = W_values, name = 'W', borrow = True)
             
         if b is None:
@@ -138,9 +155,9 @@ class HiddenLayer(object):
         self.W = W
         self.b = b
         
-        # calculate linear output using dot product + b, else use tanh or sigmoid
+        # calculate linear output using dot product + b, else use tanh or sigmoid or ReLU
         lin_output = T.dot(input, self.W) + self.b
-        self.output = (lin_output if activation is None else activation(lin_output))
+        self.output = activation_function(lin_output)
         
         # update weights and bias
         self.params = [self.W, self.b]
@@ -205,7 +222,7 @@ class LeNetConvPoolLayer(object):
             fan_out = (filter_shape[0] * np.prod(filter_shape[2:]) // np.prod(pool_size))
            
             # initialize weights with random weights
-            W_bound = np.sqrt(6. / (fan_in + fan_out))
+            W_bound = np.sqrt(initial_weight_scale / (fan_in + fan_out))
             self.W = theano.shared( np.asarray(rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
                                         dtype=theano.config.floatX), borrow=True)
             
@@ -231,7 +248,7 @@ class LeNetConvPoolLayer(object):
             )
             
             # add bias
-            self.output = T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+            self.output = activation_function(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
             
             # store weights and biases for this layer
             self.params = [self.W, self.b]
@@ -281,14 +298,14 @@ def evaluate_lenet5():
     layer2 = HiddenLayer (rng, input = layer2_input, 
                             n_in = n_kerns[1] * 4 * 4,
                             n_out = n_hidden,
-                            activation = T.tanh )
+                            activation = activation_function )
                             
-    # classify values of sigmoid layer
+    # Softmax output layer
     layer3 = LogisticRegression(input = layer2.output, n_in = n_hidden, n_out = 10)
     
     
     # regularization
-    regularization =  0.5 * L2_reg * sum([(layer2.W**2).sum()]) 
+    regularization =  0.5 * L2_reg * sum([(layer3.W**2).sum()]) 
     
     # negative_log_likelihood cost
     cost = layer3.negative_log_likelihood(y) + regularization
@@ -328,60 +345,52 @@ def evaluate_lenet5():
     ############################
     print("training......")
     
-    # early stopping to prevent over fitting
-    patience = 10000                # min number of examples to view
-    patience_increase = 2           # wait this long before updating best
-    improvement_threshold = 0.995   # min improvement to consider
-
     best_validation_loss = np.inf
     best_epoch = 0
     test_score = 0.
     start_time = timeit.default_timer()
     epoch = 0
-    done_looping = False
+    
+    print("Start time: ", start_time)
     
     while (epoch < n_epochs): # and (not done_looping):   let's let it run a bit longer
-    
         epoch = epoch + 1
         
-        for minibatch_index in range(n_test_batches):
-            
+        for minibatch_index in range(n_train_batches):
             iter = (epoch - 1) * n_train_batches + minibatch_index
             
-            if iter % 100 == 0:
-                print ('_______________________training iteration______________________________ ', iter)
+           
                 
             cost_ij = train_model(minibatch_index)
-            
-            if (iter + 1) % validation_frequency == 0:
+                 
+            # compute zero one loss on validation set
+            validation_losses = [validate_model(i) for i in range(n_valid_batches)]
+            this_validation_loss = np.mean(validation_losses)
+            #print('epoch %i, minibatch %i/%i, validation %f %%' %(epoch, minibatch_index + 1, n_train_batches, 100.0 - this_validation_loss * 100.))
                 
-                # compute zero one loss on validation set
-                validation_losses = [validate_model(i) for i in range(n_valid_batches)]
-                this_validation_loss = np.mean(validation_losses)
-                print('epoch %i, minibatch %i/%i, validation %f %%' %(epoch, minibatch_index + 1, n_train_batches, 100.0 - this_validation_loss * 100.))
+            if iter % 100 == 0:
+                print ('training iteration: ', iter)    
+                print ("validation loss: ", 100.0 - this_validation_loss * 100.0 )
                 
-                # if best score to date
-                if this_validation_loss < best_validation_loss:
+            # if best score to date
+            if this_validation_loss < best_validation_loss:
                 
-                    if this_validation_loss < best_validation_loss * improvement_threshold:
-                        patience = max(patience, iter * patience_increase)
-
-                    # update best scores
-                    best_validation_loss = this_validation_loss
-                    best_epoch = epoch
+                # update best scores
+                best_validation_loss = this_validation_loss
+                best_epoch = epoch
                     
-                    # test on test set
-                    test_losses = [test_model(i) for i in range(n_test_batches)]
-                    test_score = np.mean(test_losses)
-                    print(('***** epoch %i, minibatch %i/%i, test score of best model %f %%') % (epoch, minibatch_index + 1, n_train_batches, 100.0 - test_score * 100.))
+                # test on test set
+                test_losses = [test_model(i) for i in range(n_test_batches)]
+                test_score = np.mean(test_losses)
+                print(('****************** epoch %i, minibatch %i/%i, test score of best model %f %%') % (epoch, minibatch_index + 1, n_train_batches, 100.0 - test_score * 100.))
                     
-                    
+                correct = 100.0 - 100.0 * test_score    
+                if correct > 99.6:
+                    break 
                    
                  
                     
-                if patience <= iter:
-                    done_looping = True
-                    break
+               
                     
     end_time = timeit.default_timer()
     

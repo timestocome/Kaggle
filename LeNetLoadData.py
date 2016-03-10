@@ -1,7 +1,5 @@
 #!/python
 
-#!/python
-
 
 import numpy as np
 import pandas as pd
@@ -32,6 +30,7 @@ def csv_to_pickle():
    
    # training data - need to break this into training, testing, validation
    data = pd.read_csv('train.csv')
+   
    
    # shuffle data so we get random items in each set
    shuffled_data = np.random.permutation(data.index)
@@ -96,7 +95,8 @@ def csv_to_pickle():
 # load up data from pkl file
 def load_data():
    
-    file = 'train.pkl'
+    file = 'mnist_expanded.pkl'
+    #file = 'train.pkl'
     with open(file, 'rb') as f:
         training_data = pickle.load(f)
         f.close()
@@ -132,10 +132,19 @@ def load_data():
 # re-shape data to match network requirements
 def load_data_wrapper():
     tr_d, va_d, te_d, ka_d = load_data()
-     
-    tr_i, tr_l = zip(*tr_d)
+    
+    # expanded dataset
+    tr_i = tr_d[0]
+    tr_l = tr_d[1]
+    
+    # or 
+    # original data set
+    #tr_i, tr_l = zip(*tr_d)
+    
     tr_image = np.asarray(tr_i)
     tr_label = np.asarray(tr_l)
+    
+    
     
     va_i, va_l = zip(*va_d)
     va_image = np.asarray(va_i)
@@ -173,6 +182,7 @@ def load_data_wrapper():
 
 # read in data    
 training_data, validation_data, test_data, kaggle_data = load_data()
+
 
 
 

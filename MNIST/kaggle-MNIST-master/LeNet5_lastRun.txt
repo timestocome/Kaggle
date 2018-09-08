@@ -1,0 +1,1 @@
+Best validation score of 2.500000 % obtained at iteration 3 with test score of 3.000000 %Total runtime: 10.99 

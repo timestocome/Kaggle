@@ -1,0 +1,487 @@
+####################################################################################################
+First few rows of dataframe
+             Survived  Pclass  \
+PassengerId                     
+1                   0       3   
+2                   1       1   
+3                   1       3   
+4                   1       1   
+5                   0       3   
+                                                          Name     Sex   Age  \
+PassengerId                                                                    
+1                                      Braund, Mr. Owen Harris    male  22.0   
+2            Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0   
+3                                       Heikkinen, Miss. Laina  female  26.0   
+4                 Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0   
+5                                     Allen, Mr. William Henry    male  35.0   
+             SibSp  Parch            Ticket     Fare Cabin Embarked  
+PassengerId                                                          
+1                1      0         A/5 21171   7.2500   NaN        S  
+2                1      0          PC 17599  71.2833   C85        C  
+3                0      0  STON/O2. 3101282   7.9250   NaN        S  
+4                1      0            113803  53.1000  C123        S  
+5                0      0            373450   8.0500   NaN        S  
+####################################################################################################
+Data types of the columns
+Age         float64
+Cabin        object
+Embarked     object
+Fare        float64
+Name         object
+Parch         int64
+Pclass        int64
+Sex          object
+SibSp         int64
+Survived      int64
+Ticket       object
+dtype: object
+####################################################################################################
+A row of data
+Age                                                        27
+Cabin                                                     NaN
+Embarked                                                    S
+Fare                                                       21
+Name        Turpin, Mrs. William John Robert (Dorothy Ann ...
+Parch                                                       0
+Pclass                                                      2
+Sex                                                    female
+SibSp                                                       1
+Survived                                                    0
+Ticket                                                  11668
+Name: 42, dtype: object
+####################################################################################################
+A Column of data
+PassengerId
+892      7.8292
+893      7.0000
+894      9.6875
+895      8.6625
+896     12.2875
+897      9.2250
+898      7.6292
+899     29.0000
+900      7.2292
+901     24.1500
+902      7.8958
+903     26.0000
+904     82.2667
+905     26.0000
+906     61.1750
+907     27.7208
+908     12.3500
+909      7.2250
+910      7.9250
+911      7.2250
+912     59.4000
+913      3.1708
+914     31.6833
+915     61.3792
+916    262.3750
+917     14.5000
+918     61.9792
+919      7.2250
+920     30.5000
+921     21.6792
+         ...   
+862     11.5000
+863     25.9292
+864     69.5500
+865     13.0000
+866     13.0000
+867     13.8583
+868     50.4958
+869      9.5000
+870     11.1333
+871      7.8958
+872     52.5542
+873      5.0000
+874      9.0000
+875     24.0000
+876      7.2250
+877      9.8458
+878      7.8958
+879      7.8958
+880     83.1583
+881     26.0000
+882      7.8958
+883     10.5167
+884     10.5000
+885      7.0500
+886     29.1250
+887     13.0000
+888     30.0000
+889     23.4500
+890     30.0000
+891      7.7500
+Name: Fare, dtype: float64
+####################################################################################################
+Count rows
+1309
+####################################################################################################
+NaN/Null values?
+Age          263
+Cabin       1014
+Embarked       2
+Fare           1
+Name           0
+Parch          0
+Pclass         0
+Sex            0
+SibSp          0
+Survived       0
+Ticket         0
+dtype: int64
+####################################################################################################
+Describe Data
+               Age         Fare        Parch       Pclass        SibSp  \
+count  1046.000000  1308.000000  1309.000000  1309.000000  1309.000000   
+mean     29.881138    33.295479     0.385027     2.294882     0.498854   
+std      14.413493    51.758668     0.865560     0.837836     1.041658   
+min       0.170000     0.000000     0.000000     1.000000     0.000000   
+25%            NaN          NaN     0.000000     2.000000     0.000000   
+50%            NaN          NaN     0.000000     3.000000     0.000000   
+75%            NaN          NaN     0.000000     3.000000     1.000000   
+max      80.000000   512.329200     9.000000     3.000000     8.000000   
+          Survived  
+count  1309.000000  
+mean     -0.058060  
+std       0.760044  
+min      -1.000000  
+25%      -1.000000  
+50%       0.000000  
+75%       1.000000  
+max       1.000000  
+####################################################################################################
+Column names
+Columns ['Age', 'Cabin', 'Embarked', 'Fare', 'Name', 'Parch', 'Pclass', 'Sex', 'SibSp', 'Survived', 'Ticket']
+####################################################################################################
+New Column Names
+['Age', 'Cabin', 'Embarked', 'Fare', 'Name', 'ParentsAndOrChildren', 'Class', 'Sex', 'SiblingsAndOrSpouse', 'Survived', 'Ticket']
+####################################################################################################
+Dropped Cabin and Ticket columns
+['Age', 'Embarked', 'Fare', 'Name', 'ParentsAndOrChildren', 'Class', 'Sex', 'SiblingsAndOrSpouse', 'Survived']
+####################################################################################################
+Embarked values and counts
+S    914
+C    270
+Q    123
+Name: Embarked, dtype: int64
+Embarked values and counts after filling both NA values with S
+S    916
+C    270
+Q    123
+Name: Embarked, dtype: int64
+Check embarking location properly changed to new columns
+              Age Embarked     Fare  \
+PassengerId                           
+892          34.5        Q   7.8292   
+893          47.0        S   7.0000   
+894          62.0        Q   9.6875   
+895          27.0        S   8.6625   
+896          22.0        S  12.2875   
+                                                     Name  \
+PassengerId                                                 
+892                                      Kelly, Mr. James   
+893                      Wilkes, Mrs. James (Ellen Needs)   
+894                             Myles, Mr. Thomas Francis   
+895                                      Wirz, Mr. Albert   
+896          Hirvonen, Mrs. Alexander (Helga E Lindqvist)   
+             ParentsAndOrChildren  Class     Sex  SiblingsAndOrSpouse  \
+PassengerId                                                             
+892                             0      3    male                    0   
+893                             0      3  female                    1   
+894                             0      2    male                    0   
+895                             0      3    male                    0   
+896                             1      3  female                    1   
+             Survived  Embarked_S  Embarked_C  Embarked_Q  
+PassengerId                                                
+892                -1           0           0           1  
+893                -1           1           0           0  
+894                -1           0           0           1  
+895                -1           1           0           0  
+896                -1           1           0           0  
+####################################################################################################
+Convert Sex column from male/female to 1/0
+              Age     Fare                                          Name  \
+PassengerId                                                                
+892          34.5   7.8292                              Kelly, Mr. James   
+893          47.0   7.0000              Wilkes, Mrs. James (Ellen Needs)   
+894          62.0   9.6875                     Myles, Mr. Thomas Francis   
+895          27.0   8.6625                              Wirz, Mr. Albert   
+896          22.0  12.2875  Hirvonen, Mrs. Alexander (Helga E Lindqvist)   
+             ParentsAndOrChildren  Class  Sex  SiblingsAndOrSpouse  Survived  \
+PassengerId                                                                    
+892                             0      3    1                    0        -1   
+893                             0      3    0                    1        -1   
+894                             0      2    1                    0        -1   
+895                             0      3    1                    0        -1   
+896                             1      3    0                    1        -1   
+             Embarked_S  Embarked_C  Embarked_Q  
+PassengerId                                      
+892                   0           0           1  
+893                   1           0           0  
+894                   0           0           1  
+895                   1           0           0  
+896                   1           0           0  
+####################################################################################################
+Titles:
+Mr          757
+Miss        260
+Mrs         197
+Master       61
+Dr            8
+Rev           8
+Col           4
+Major         2
+Mlle          2
+Ms            2
+Mme           1
+Capt          1
+Sir           1
+Countess      1
+Jonkheer      1
+Lady          1
+Dona          1
+Don           1
+Name: Title, dtype: int64
+Titles:
+1     757
+2     260
+3     197
+4      61
+5       8
+6       8
+7       4
+8       2
+9       2
+10      2
+17      1
+11      1
+12      1
+13      1
+14      1
+15      1
+16      1
+18      1
+Name: Title, dtype: int64
+####################################################################################################
+####################################################################################################
+Average fare by class Class
+1    60.0000
+2    15.0458
+3     8.0500
+Name: Fare, dtype: float64
+####################################################################################################
+Min/Max Fares:  0.0 512.3292
+####################################################################################################
+No built in scaling but can scale to -1..1 
+####################################################################################################
+Family names:
+PassengerId
+892              Kelly
+893             Wilkes
+894              Myles
+895               Wirz
+896           Hirvonen
+897           Svensson
+898           Connolly
+899           Caldwell
+900            Abrahim
+901             Davies
+902             Ilieff
+903              Jones
+904             Snyder
+905             Howard
+906            Chaffee
+907          del Carlo
+908              Keane
+909              Assaf
+910         Ilmakangas
+911       Assaf Khalil
+912         Rothschild
+913              Olsen
+914         Flegenheim
+915           Williams
+916            Ryerson
+917             Robins
+918              Ostby
+919              Daher
+920              Brady
+921             Samaan
+            ...       
+862              Giles
+863              Swift
+864               Sage
+865               Gill
+866            Bystrom
+867       Duran y More
+868           Roebling
+869      van Melkebeke
+870            Johnson
+871             Balkic
+872           Beckwith
+873           Carlsson
+874    Vander Cruyssen
+875            Abelson
+876              Najib
+877         Gustafsson
+878            Petroff
+879             Laleff
+880             Potter
+881            Shelley
+882             Markun
+883           Dahlberg
+884           Banfield
+885           Sutehall
+886               Rice
+887           Montvila
+888             Graham
+889           Johnston
+890               Behr
+891             Dooley
+dtype: object
+Family members count:
+Counter({'Andersson': 11, 'Sage': 11, 'Goodwin': 8, 'Asplund': 8, 'Davies': 7, 'Rice': 6, 'Johnson': 6, 'Brown': 6, 'Panula': 6, 'Carter': 6, 'Skoog': 6, 'Ford': 6, 'Fortune': 6, 'Smith': 6, 'Thomas': 5, 'Williams': 5, 'Ryerson': 5, 'Kelly': 5, 'Lefebre': 5, 'Palsson': 5, 'Goldsmith': 4, 'Cacic': 4, 'Harper': 4, 'Allison': 4, 'West': 4, 'Hansen': 4, 'Herman': 4, 'Baclini': 4, 'Elias': 4, 'Vander Planke': 4, 'Boulos': 4, 'Johansson': 4, 'Harris': 4, 'Laroche': 4, 'Ware': 4, 'Johnston': 4, 'Hocking': 4, 'Dean': 4, 'Olsen': 4, 'Gustafsson': 4, 'Becker': 4, 'Hart': 4, 'Drew': 3, 'McCoy': 3, 'Meyer': 3, 'Richards': 3, 'Abbott': 3, 'Newell': 3, 'Jussila': 3, 'Daly': 3, 'Wells': 3, 'Rosblom': 3, 'Thayer': 3, 'Karlsson': 3, 'Klasen': 3, 'Hays': 3, 'Van Impe': 3, 'Chapman': 3, 'Kink-Heilmann': 3, 'Hoyt': 3, 'Samaan': 3, 'Jensen': 3, 'Nakid': 3, 'Moran': 3, 'Oreskovic': 3, 'Flynn': 3, 'Navratil': 3, 'Dodge': 3, 'Douglas': 3, 'Caldwell': 3, 'Carlsson': 3, 'Keane': 3, 'Compton': 3, 'Hickman': 3, 'Widener': 3, 'van Billiard': 3, 'Coutts': 3, 'Moubarek': 3, 'Giles': 3, 'Bourke': 3, 'Quick': 3, 'Peter': 3, 'Collyer': 3, 'Phillips': 3, 'Minahan': 3, 'Touma': 3, 'Graham': 3, "O'Brien": 3, 'Wick': 3, 'Crosby': 3, 'Danbom': 3, 'Sandstrom': 3, 'Taussig': 3, 'White': 3, 'Peacock': 3, 'Olsson': 3, 'Cor': 3, 'Svensson': 3, 'Howard': 3, 'Murphy': 3, 'Mallet': 3, 'Spedden': 3, 'Frauenthal': 3, 'Nilsson': 3, 'Warren': 3, 'Wiklund': 2, 'Robins': 2, 'Marvin': 2, 'Khalil': 2, 'Zabour': 2, 'Chaffee': 2, 'McNamee': 2, 'Lindell': 2, 'Rothschild': 2, 'Lahtinen': 2, 'Kantor': 2, 'Chambers': 2, 'Holverson': 2, 'Carr': 2, 'Straus': 2, 'Renouf': 2, 'Clark': 2, 'Cribb': 2, 'Gibson': 2, 'Silvey': 2, 'Davison': 2, 'Yasbeck': 2, 'Clarke': 2, 'Petroff': 2, 'Kimball': 2, 'Fleming': 2, 'Thorneycroft': 2, 'Chronopoulos': 2, 'Hagland': 2, 'Harder': 2, 'Nicola-Yarred': 2, 'Cumings': 2, 'Greenfield': 2, 'Karun': 2, 'Caram': 2, 'Braund': 2, 'Dick': 2, 'Turpin': 2, 'del Carlo': 2, 'Kink': 2, 'Abelseth': 2, 'Jefferys': 2, 'Duff Gordon': 2, 'Fox': 2, 'Bonnell': 2, 'Bishop': 2, 'Backstrom': 2, 'Risien': 2, 'Coleff': 2, 'Snyder': 2, 'Saad': 2, 'Hakkarainen': 2, 'Duran y More': 2, 'Doling': 2, 'Frolicher-Stehli': 2, 'Hamalainen': 2, 'Carrau': 2, 'Connolly': 2, 'Cavendish': 2, 'Bowen': 2, 'Futrelle': 2, 'Ryan': 2, 'Cardeza': 2, 'Hippach': 2, 'Spencer': 2, 'Canavan': 2, 'Gale': 2, 'Baxter': 2, "O'Connor": 2, 'Dennis': 2, 'Stanley': 2, 'Aks': 2, 'Webber': 2, 'Nasser': 2, 'Hirvonen': 2, 'Franklin': 2, 'Pears': 2, 'Ali': 2, 'Abelson': 2, 'Christy': 2, 'Davidson': 2, 'Larsson': 2, 'Strom': 2, 'Rogers': 2, 'Mellinger': 2, 'Bradley': 2, 'Stengel': 2, 'Lennon': 2, 'Weisz': 2, 'Bryhl': 2, 'Moore': 2, 'Andrew': 2, 'Ilmakangas': 2, 'Zakarian': 2, 'Pokrnic': 2, 'Buckley': 2, 'Arnold-Franchi': 2, 'Angle': 2, 'Beane': 2, 'Kenyon': 2, 'Jonsson': 2, 'Allen': 2, 'Louch': 2, 'Cook': 2, 'Penasco y Castellana': 2, 'de Messemaeker': 2, 'Calic': 2, 'Taylor': 2, 'Burns': 2, 'Betros': 2, 'Kiernan': 2, 'Dyker': 2, 'Lines': 2, 'Ostby': 2, 'Morley': 2, 'Lam': 2, 'Wright': 2, 'Andrews': 2, 'Astor': 2, 'Lobb': 2, 'Beckwith': 2, 'Barbara': 2, 'Faunthorpe': 2, 'Mahon': 2, 'Attalah': 2, 'Watt': 2, 'McGowan': 2, 'Foley': 2, 'Hold': 2, 'Goldenberg': 2, 'McCarthy': 2, 'Jacobsohn': 2, 'Moor': 2, 'Hipkins': 1, 'Botsford': 1, 'Sjostedt': 1, 'Nasr': 1, 'Najib': 1, 'Daher': 1, 'Bowenur': 1, 'van Melkebeke': 1, 'Parkes': 1, 'McCormack': 1, 'Fahlstrom': 1, 'Pedersen': 1, 'Millet': 1, 'Slemen': 1, 'Frolicher': 1, 'Young': 1, 'Berglund': 1, 'Hilliard': 1, 'Lindahl': 1, 'Loring': 1, 'Rush': 1, 'Davis': 1, 'Bjorklund': 1, 'Drapkin': 1, 'Hendekovic': 1, 'Sharp': 1, 'Corn': 1, 'Dimic': 1, 'Sutehall': 1, 'Wilkes': 1, 'Marechal': 1, 'Andersen-Jensen': 1, 'Leonard': 1, 'Myles': 1, 'Partner': 1, 'Giglio': 1, 'Osman': 1, 'Connors': 1, 'Finoli': 1, 'Krekorian': 1, 'Stephenson': 1, 'Strilic': 1, 'Blank': 1, 'Todoroff': 1, 'Murdlin': 1, 'Norman': 1, 'Meanwell': 1, 'Head': 1, 'Lundstrom': 1, 'Schabert': 1, 'Heikkinen': 1, 'Hiltunen': 1, 'Sagesser': 1, 'Rugg': 1, 'Vestrom': 1, 'Ashby': 1, 'Bissette': 1, 'Geiger': 1, 'Cornell': 1, 'Mardirosian': 1, 'Emanuel': 1, 'Corey': 1, 'Fillbrook': 1, 'Wheadon': 1, 'Molson': 1, 'Mack': 1, 'Gronnestad': 1, 'Ismay': 1, 'Lyntakoff': 1, 'Osen': 1, 'Beauchamp': 1, 'Denbury': 1, 'Lewy': 1, 'Ayoub': 1, 'Dintcheff': 1, 'Naidenoff': 1, 'Shutes': 1, 'Van der hoef': 1, 'Henriksson': 1, 'Knight': 1, 'Willey': 1, 'Salkjelsvik': 1, 'Turja': 1, 'Wilhelms': 1, 'Emir': 1, 'Mangiavacchi': 1, 'Widegren': 1, 'Lesurer': 1, 'Sivola': 1, 'Sunderland': 1, 'Rosenbaum': 1, 'Johannesen-Bratthammer': 1, 'Birnbaum': 1, 'Gee': 1, "O'Connell": 1, 'Brady': 1, 'Sdycoff': 1, "O'Donoghue": 1, 'Ponesell': 1, 'Makinen': 1, 'Radeff': 1, 'Mullens': 1, 'Mamee': 1, 'Petranec': 1, 'McCaffry': 1, 'Hellstrom': 1, 'Sap': 1, 'Markoff': 1, 'Maisner': 1, 'Lester': 1, 'Dorking': 1, 'Hassab': 1, 'Sobey': 1, 'Sinkkonen': 1, 'Hegarty': 1, 'Persson': 1, 'Bjornstrom-Steffansson': 1, 'Lindstrom': 1, 'Alexander': 1, 'Gillespie': 1, 'Balkic': 1, 'Strandberg': 1, 'Pasic': 1, 'Moss': 1, 'Swane': 1, 'Pain': 1, 'Buss': 1, 'Uruchurtu': 1, 'Moen': 1, 'Garside': 1, 'Pettersson': 1, 'Midtsjo': 1, 'Edvardsson': 1, 'Charters': 1, 'Linehan': 1, 'Wirz': 1, 'Jarvis': 1, 'Lulic': 1, 'Braf': 1, 'Yousif': 1, 'McGough': 1, 'Lithman': 1, 'Farthing': 1, 'Sadowitz': 1, 'McDermott': 1, 'Devaney': 1, 'Levy': 1, 'Rouse': 1, 'Crafton': 1, 'Hyman': 1, 'Gracie': 1, 'Dantcheff': 1, 'Cleaver': 1, 'Salonen': 1, 'Malachard': 1, 'Evans': 1, 'Chibnall': 1, 'Ross': 1, 'Danoff': 1, 'Vande Walle': 1, 'Coxon': 1, 'Fry': 1, "O'Keefe": 1, 'Ringhini': 1, 'Smiljanic': 1, 'Behr': 1, 'Pekoniemi': 1, 'Ball': 1, 'Holthen': 1, 'Sutton': 1, 'Brocklebank': 1, 'Saalfeld': 1, 'MacKay': 1, 'Wheeler': 1, 'Hampe': 1, 'Case': 1, 'Richard': 1, 'Ivanoff': 1, 'Peruschitz': 1, 'Barber': 1, 'Silverthorne': 1, 'Collett': 1, 'de Mulder': 1, 'Adahl': 1, 'Tobin': 1, 'Ovies y Rodriguez': 1, 'Henry': 1, 'Brewe': 1, 'Appleton': 1, 'Sedgwick': 1, 'Gill': 1, 'Troupiansky': 1, 'Kraeff': 1, 'McNeill': 1, 'Culumovic': 1, 'Nankoff': 1, 'Demetri': 1, 'Beattie': 1, 'Toomey': 1, 'Eustis': 1, 'Pickard': 1, 'Torfa': 1, 'Vanden Steen': 1, 'Tikkanen': 1, 'Portaluppi': 1, 'Borebank': 1, 'Goldschmidt': 1, 'Harrington': 1, 'Bird': 1, 'Rosenshine': 1, 'Lundahl': 1, 'Harbeck': 1, 'Baumann': 1, 'Saundercock': 1, 'Schmidt': 1, 'Maybery': 1, 'Lingane': 1, 'Hagardon': 1, 'Christmann': 1, 'Rasmussen': 1, 'Peters': 1, 'Parr': 1, 'Isham': 1, 'Petterson': 1, 'Baccos': 1, 'Slabenoff': 1, 'Pavlovic': 1, 'Farrell': 1, 'Mannion': 1, 'Ridsdale': 1, 'McKane': 1, 'Green': 1, 'Gilinski': 1, 'Tornquist': 1, 'Lurette': 1, 'Mulvihill': 1, 'Lemberopolous': 1, 'Badman': 1, 'Peuchen': 1, 'Heininen': 1, 'Beesley': 1, 'Asim': 1, 'Storey': 1, 'Lehmann': 1, 'Serepeca': 1, 'Reeves': 1, "O'Sullivan": 1, 'Lockyer': 1, 'Simmons': 1, 'Shorney': 1, 'Waelens': 1, 'Woolner': 1, 'Connaghton': 1, 'Johansson Palmquist': 1, 'de Pelsmaeker': 1, 'Adams': 1, 'Payne': 1, 'Doyle': 1, 'Reuchlin': 1, 'Otter': 1, 'McEvoy': 1, 'Sundman': 1, 'Willard': 1, 'Hogeboom': 1, 'Razi': 1, 'Andreasson': 1, 'Zimmerman': 1, 'Nirva': 1, 'Silven': 1, 'Byles': 1, 'Reed': 1, 'Staneff': 1, 'Sivic': 1, 'Riordan': 1, 'Barton': 1, 'Stoytcheff': 1, 'Shelley': 1, 'Nancarrow': 1, 'Bucknell': 1, 'Glynn': 1, 'Butt': 1, 'Sirayanian': 1, 'Kennedy': 1, 'Mudd': 1, 'Sjoblom': 1, 'Thomson': 1, 'Parrish': 1, 'Lamb': 1, 'Calderhead': 1, 'Stead': 1, 'de Brito': 1, 'Hassan': 1, 'Robbins': 1, 'Hawksford': 1, 'Leeni': 1, 'Angheloff': 1, 'Padro y Manent': 1, 'Hodges': 1, 'Jermyn': 1, 'Blackwell': 1, 'Downton': 1, 'Patchett': 1, 'Madigan': 1, 'Badt': 1, 'Nye': 1, 'Baimbrigge': 1, 'Katavelas': 1, 'Aldworth': 1, 'Turkula': 1, 'Ling': 1, 'Newsom': 1, 'Assaf': 1, 'Pengelly': 1, 'Madsen': 1, 'Lang': 1, 'Earnshaw': 1, 'Vovk': 1, 'Saade': 1, 'Coleridge': 1, 'Candee': 1, 'Mock': 1, 'Ibrahim Shawah': 1, 'Burke': 1, 'Wittevrongel': 1, 'Oliva y Ocana': 1, 'Healy': 1, 'Rood': 1, 'Everett': 1, 'Dulles': 1, 'Andersen': 1, 'Kallio': 1, 'Enander': 1, 'Aronsson': 1, 'Miles': 1, 'McCrae': 1, 'Shine': 1, 'Lahoud': 1, 'Chevre': 1, 'Chisholm': 1, 'Keefe': 1, 'Mionoff': 1, 'Masselmani': 1, 'Scanlan': 1, 'Harrison': 1, 'Lundin': 1, 'Swift': 1, 'Aubart': 1, 'Whabee': 1, 'Crease': 1, 'Corbett': 1, 'Ohman': 1, 'Peltomaki': 1, 'Butler': 1, 'Parker': 1, 'Vander Cruyssen': 1, 'Laleff': 1, 'Madill': 1, 'Mitchell': 1, 'Bing': 1, 'Maenpaa': 1, 'Rheims': 1, 'Minkoff': 1, 'Dika': 1, "O'Dwyer": 1, 'Leinonen': 1, 'Hanna': 1, 'Tenglin': 1, 'Barkworth': 1, 'Pearce': 1, 'Bostandyeff': 1, 'Lindqvist': 1, 'Roebling': 1, 'Birkeland': 1, 'Morrow': 1, 'Funk': 1, 'Veal': 1, 'Dooley': 1, 'Shellard': 1, 'Odahl': 1, 'Dibden': 1, 'Leyson': 1, 'Olsvigen': 1, 'Jalsevac': 1, 'Larsson-Rondberg': 1, 'Gavey': 1, 'Foreman': 1, 'Salander': 1, 'Roth': 1, 'Nesson': 1, 'Beavan': 1, 'Cunningham': 1, 'Longley': 1, 'Lievens': 1, 'Banfield': 1, 'Lemore': 1, 'Hewlett': 1, 'Albimona': 1, 'Kvillner': 1, 'Carver': 1, 'Sheerlinck': 1, 'Maioni': 1, 'Spector': 1, 'Dowdell': 1, 'Rothes': 1, 'Jones': 1, 'Dahl': 1, 'Collander': 1, 'Brandeis': 1, 'McCrie': 1, 'Celotti': 1, 'Stokes': 1, 'Nysveen': 1, "O'Driscoll": 1, 'Windelov': 1, 'Conlon': 1, 'Barah': 1, 'Nicholls': 1, 'Romaine': 1, 'Abrahamsson': 1, 'Lindeberg-Lind': 1, 'Niskanen': 1, 'Porter': 1, 'LeRoy': 1, 'Smart': 1, 'Karnes': 1, 'Givard': 1, 'Sadlier': 1, 'Slocovski': 1, 'Paulner': 1, 'Matinoff': 1, 'Dahlberg': 1, 'Landergren': 1, 'Kent': 1, 'Hunt': 1, 'Riihivouri': 1, 'Nenkoff': 1, 'Soholt': 1, 'Maguire': 1, 'Walker': 1, 'Endres': 1, 'Sloper': 1, 'Duane': 1, 'Bracken': 1, 'Rekic': 1, 'Alhomaki': 1, 'Abrahim': 1, 'Troutt': 1, 'Berriman': 1, 'Coelho': 1, 'Harknett': 1, 'Weir': 1, 'Horgan': 1, 'Eitemiller': 1, 'Petersen': 1, 'Augustsson': 1, 'Dakic': 1, 'Moussa': 1, 'Rowe': 1, 'Daniel': 1, 'Ilett': 1, 'Watson': 1, 'Reynolds': 1, 'Trout': 1, 'Frost': 1, 'Willer': 1, 'Ekstrom': 1, 'Tucker': 1, 'Stanton': 1, 'Assaf Khalil': 1, 'Jansson': 1, 'Gaskell': 1, 'Mangan': 1, 'Stranden': 1, 'Abbing': 1, 'Julian': 1, 'Hood': 1, 'Myhrman': 1, 'Vande Velde': 1, 'Clifford': 1, 'Nosworthy': 1, 'Tomlin': 1, 'Kreuchen': 1, 'Harmer': 1, 'McMahon': 1, 'Colley': 1, 'Honkanen': 1, 'Jonkoff': 1, "O'Leary": 1, 'Wenzel': 1, 'Markun': 1, 'Assam': 1, 'Bazzani': 1, 'Pallas y Castello': 1, 'Lovell': 1, 'Peduzzi': 1, 'Gilnagh': 1, 'Hee': 1, 'Potter': 1, 'Hedman': 1, 'Long': 1, 'Bystrom': 1, 'Barry': 1, 'Saether': 1, 'Nieminen': 1, 'Cameron': 1, 'Stewart': 1, 'Thorne': 1, 'Brobeck': 1, 'Hale': 1, 'Drazenoic': 1, 'Ahlin': 1, 'Yrois': 1, 'Goncalves': 1, 'Pulbaum': 1, 'Smyth': 1, 'Milling': 1, 'Cotterill': 1, 'Laitinen': 1, 'Gheorgheff': 1, 'Salomon': 1, 'Montvila': 1, 'Moutal': 1, 'Leader': 1, 'Matthews': 1, 'Rintamaki': 1, 'Flegenheim': 1, 'Bowerman': 1, 'Bailey': 1, 'Chip': 1, 'Youseff': 1, 'Haas': 1, 'Anderson': 1, 'Jenkin': 1, 'Deacon': 1, 'Shaughnessy': 1, 'Bentham': 1, 'Jardin': 1, 'Gilbert': 1, 'Doharr': 1, 'Mitkoff': 1, 'Moraweck': 1, 'Nourney': 1, 'Theobald': 1, 'Sawyer': 1, 'Robert': 1, 'Torber': 1, 'Lindblom': 1, 'Mockler': 1, 'Homer': 1, 'Guggenheim': 1, 'Kalvik': 1, 'Gallagher': 1, 'Nysten': 1, 'McGovern': 1, 'Bateman': 1, 'Pernot': 1, 'Cohen': 1, 'Stone': 1, 'Foo': 1, 'Eklund': 1, 'Holm': 1, 'Vartanian': 1, 'Humblen': 1, 'Colbert': 1, 'Novel': 1, 'Oxenham': 1, 'Sweet': 1, 'Stankovic': 1, 'Allum': 1, 'Nicholson': 1, 'Mernagh': 1, 'Wiseman': 1, 'Toufik': 1, 'Fynney': 1, 'Chaudanson': 1, 'Denkoff': 1, 'Mayne': 1, 'Icard': 1, 'Pinsky': 1, 'Cassebeer': 1, 'Kirkland': 1, 'Turcin': 1, 'Seward': 1, 'Naughton': 1, 'Karaic': 1, 'Meek': 1, 'Garfirth': 1, 'Campbell': 1, 'Kilgannon': 1, 'Artagaveytia': 1, 'Klaber': 1, 'Fischer': 1, 'Williams-Lambert': 1, 'Stahelin-Maeglin': 1, 'Duquemin': 1, 'Greenberg': 1, 'Niklasson': 1, 'Spinner': 1, 'Reynaldo': 1, 'Rommetvedt': 1, 'Elsbury': 1, 'Bidois': 1, 'Somerton': 1, 'Delalic': 1, 'Plotcharsky': 1, 'Ilieff': 1, 'Keeping': 1, 'Francatelli': 1, 'Walcroft': 1, 'Ward': 1, 'Bengtsson': 1, 'Omont': 1, 'Daniels': 1, 'Vendel': 1, 'Jerwan': 1, 'Perkin': 1, 'Sirota': 1, 'Natsch': 1, 'Perreault': 1, 'Lane': 1, 'Slayter': 1, 'Kassem': 1, 'Hosono': 1, 'Cherry': 1, 'Cairns': 1, 'Carbines': 1, 'Guest': 1, 'Meo': 1, 'Mellors': 1, 'Leitch': 1, 'Johanson': 1, 'Cann': 1, 'Wilson': 1, 'Sincock': 1, 'Simonius-Blumer': 1, 'Mineff': 1, 'Yousseff': 1})
+####################################################################################################
+/Users/ljcobb/anaconda/lib/python3.5/site-packages/numpy/lib/function_base.py:4116: RuntimeWarning: Invalid value encountered in percentile
+  interpolation=interpolation)
+Family names ['Abbing', 'Abbott', 'Abelseth', 'Abelson', 'Abrahamsson', 'Abrahim', 'Adahl', 'Adams', 'Ahlin', 'Aks', 'Albimona', 'Aldworth', 'Alexander', 'Alhomaki', 'Ali', 'Allen', 'Allison', 'Allum', 'Andersen', 'Andersen-Jensen', 'Anderson', 'Andersson', 'Andreasson', 'Andrew', 'Andrews', 'Angheloff', 'Angle', 'Appleton', 'Arnold-Franchi', 'Aronsson', 'Artagaveytia', 'Ashby', 'Asim', 'Asplund', 'Assaf', 'Assaf Khalil', 'Assam', 'Astor', 'Attalah', 'Aubart', 'Augustsson', 'Ayoub', 'Baccos', 'Backstrom', 'Baclini', 'Badman', 'Badt', 'Bailey', 'Baimbrigge', 'Balkic', 'Ball', 'Banfield', 'Barah', 'Barbara', 'Barber', 'Barkworth', 'Barry', 'Barton', 'Bateman', 'Baumann', 'Baxter', 'Bazzani', 'Beane', 'Beattie', 'Beauchamp', 'Beavan', 'Becker', 'Beckwith', 'Beesley', 'Behr', 'Bengtsson', 'Bentham', 'Berglund', 'Berriman', 'Betros', 'Bidois', 'Bing', 'Bird', 'Birkeland', 'Birnbaum', 'Bishop', 'Bissette', 'Bjorklund', 'Bjornstrom-Steffansson', 'Blackwell', 'Blank', 'Bonnell', 'Borebank', 'Bostandyeff', 'Botsford', 'Boulos', 'Bourke', 'Bowen', 'Bowenur', 'Bowerman', 'Bracken', 'Bradley', 'Brady', 'Braf', 'Brandeis', 'Braund', 'Brewe', 'Brobeck', 'Brocklebank', 'Brown', 'Bryhl', 'Buckley', 'Bucknell', 'Burke', 'Burns', 'Buss', 'Butler', 'Butt', 'Byles', 'Bystrom', 'Cacic', 'Cairns', 'Calderhead', 'Caldwell', 'Calic', 'Cameron', 'Campbell', 'Canavan', 'Candee', 'Cann', 'Caram', 'Carbines', 'Cardeza', 'Carlsson', 'Carr', 'Carrau', 'Carter', 'Carver', 'Case', 'Cassebeer', 'Cavendish', 'Celotti', 'Chaffee', 'Chambers', 'Chapman', 'Charters', 'Chaudanson', 'Cherry', 'Chevre', 'Chibnall', 'Chip', 'Chisholm', 'Christmann', 'Christy', 'Chronopoulos', 'Clark', 'Clarke', 'Cleaver', 'Clifford', 'Coelho', 'Cohen', 'Colbert', 'Coleff', 'Coleridge', 'Collander', 'Collett', 'Colley', 'Collyer', 'Compton', 'Conlon', 'Connaghton', 'Connolly', 'Connors', 'Cook', 'Cor', 'Corbett', 'Corey', 'Corn', 'Cornell', 'Cotterill', 'Coutts', 'Coxon', 'Crafton', 'Crease', 'Cribb', 'Crosby', 'Culumovic', 'Cumings', 'Cunningham', 'Daher', 'Dahl', 'Dahlberg', 'Dakic', 'Daly', 'Danbom', 'Daniel', 'Daniels', 'Danoff', 'Dantcheff', 'Davidson', 'Davies', 'Davis', 'Davison', 'Deacon', 'Dean', 'Delalic', 'Demetri', 'Denbury', 'Denkoff', 'Dennis', 'Devaney', 'Dibden', 'Dick', 'Dika', 'Dimic', 'Dintcheff', 'Dodge', 'Doharr', 'Doling', 'Dooley', 'Dorking', 'Douglas', 'Dowdell', 'Downton', 'Doyle', 'Drapkin', 'Drazenoic', 'Drew', 'Duane', 'Duff Gordon', 'Dulles', 'Duquemin', 'Duran y More', 'Dyker', 'Earnshaw', 'Edvardsson', 'Eitemiller', 'Eklund', 'Ekstrom', 'Elias', 'Elsbury', 'Emanuel', 'Emir', 'Enander', 'Endres', 'Eustis', 'Evans', 'Everett', 'Fahlstrom', 'Farrell', 'Farthing', 'Faunthorpe', 'Fillbrook', 'Finoli', 'Fischer', 'Flegenheim', 'Fleming', 'Flynn', 'Foley', 'Foo', 'Ford', 'Foreman', 'Fortune', 'Fox', 'Francatelli', 'Franklin', 'Frauenthal', 'Frolicher', 'Frolicher-Stehli', 'Frost', 'Fry', 'Funk', 'Futrelle', 'Fynney', 'Gale', 'Gallagher', 'Garfirth', 'Garside', 'Gaskell', 'Gavey', 'Gee', 'Geiger', 'Gheorgheff', 'Gibson', 'Giglio', 'Gilbert', 'Giles', 'Gilinski', 'Gill', 'Gillespie', 'Gilnagh', 'Givard', 'Glynn', 'Goldenberg', 'Goldschmidt', 'Goldsmith', 'Goncalves', 'Goodwin', 'Gracie', 'Graham', 'Green', 'Greenberg', 'Greenfield', 'Gronnestad', 'Guest', 'Guggenheim', 'Gustafsson', 'Haas', 'Hagardon', 'Hagland', 'Hakkarainen', 'Hale', 'Hamalainen', 'Hampe', 'Hanna', 'Hansen', 'Harbeck', 'Harder', 'Harknett', 'Harmer', 'Harper', 'Harrington', 'Harris', 'Harrison', 'Hart', 'Hassab', 'Hassan', 'Hawksford', 'Hays', 'Head', 'Healy', 'Hedman', 'Hee', 'Hegarty', 'Heikkinen', 'Heininen', 'Hellstrom', 'Hendekovic', 'Henriksson', 'Henry', 'Herman', 'Hewlett', 'Hickman', 'Hilliard', 'Hiltunen', 'Hipkins', 'Hippach', 'Hirvonen', 'Hocking', 'Hodges', 'Hogeboom', 'Hold', 'Holm', 'Holthen', 'Holverson', 'Homer', 'Honkanen', 'Hood', 'Horgan', 'Hosono', 'Howard', 'Hoyt', 'Humblen', 'Hunt', 'Hyman', 'Ibrahim Shawah', 'Icard', 'Ilett', 'Ilieff', 'Ilmakangas', 'Isham', 'Ismay', 'Ivanoff', 'Jacobsohn', 'Jalsevac', 'Jansson', 'Jardin', 'Jarvis', 'Jefferys', 'Jenkin', 'Jensen', 'Jermyn', 'Jerwan', 'Johannesen-Bratthammer', 'Johanson', 'Johansson', 'Johansson Palmquist', 'Johnson', 'Johnston', 'Jones', 'Jonkoff', 'Jonsson', 'Julian', 'Jussila', 'Kallio', 'Kalvik', 'Kantor', 'Karaic', 'Karlsson', 'Karnes', 'Karun', 'Kassem', 'Katavelas', 'Keane', 'Keefe', 'Keeping', 'Kelly', 'Kennedy', 'Kent', 'Kenyon', 'Khalil', 'Kiernan', 'Kilgannon', 'Kimball', 'Kink', 'Kink-Heilmann', 'Kirkland', 'Klaber', 'Klasen', 'Knight', 'Kraeff', 'Krekorian', 'Kreuchen', 'Kvillner', 'Lahoud', 'Lahtinen', 'Laitinen', 'Laleff', 'Lam', 'Lamb', 'Landergren', 'Lane', 'Lang', 'Laroche', 'Larsson', 'Larsson-Rondberg', 'LeRoy', 'Leader', 'Leeni', 'Lefebre', 'Lehmann', 'Leinonen', 'Leitch', 'Lemberopolous', 'Lemore', 'Lennon', 'Leonard', 'Lester', 'Lesurer', 'Levy', 'Lewy', 'Leyson', 'Lievens', 'Lindahl', 'Lindblom', 'Lindeberg-Lind', 'Lindell', 'Lindqvist', 'Lindstrom', 'Linehan', 'Lines', 'Ling', 'Lingane', 'Lithman', 'Lobb', 'Lockyer', 'Long', 'Longley', 'Loring', 'Louch', 'Lovell', 'Lulic', 'Lundahl', 'Lundin', 'Lundstrom', 'Lurette', 'Lyntakoff', 'MacKay', 'Mack', 'Madigan', 'Madill', 'Madsen', 'Maenpaa', 'Maguire', 'Mahon', 'Maioni', 'Maisner', 'Makinen', 'Malachard', 'Mallet', 'Mamee', 'Mangan', 'Mangiavacchi', 'Mannion', 'Mardirosian', 'Marechal', 'Markoff', 'Markun', 'Marvin', 'Masselmani', 'Matinoff', 'Matthews', 'Maybery', 'Mayne', 'McCaffry', 'McCarthy', 'McCormack', 'McCoy', 'McCrae', 'McCrie', 'McDermott', 'McEvoy', 'McGough', 'McGovern', 'McGowan', 'McKane', 'McMahon', 'McNamee', 'McNeill', 'Meanwell', 'Meek', 'Mellinger', 'Mellors', 'Meo', 'Mernagh', 'Meyer', 'Midtsjo', 'Miles', 'Millet', 'Milling', 'Minahan', 'Mineff', 'Minkoff', 'Mionoff', 'Mitchell', 'Mitkoff', 'Mock', 'Mockler', 'Moen', 'Molson', 'Montvila', 'Moor', 'Moore', 'Moran', 'Moraweck', 'Morley', 'Morrow', 'Moss', 'Moubarek', 'Moussa', 'Moutal', 'Mudd', 'Mullens', 'Mulvihill', 'Murdlin', 'Murphy', 'Myhrman', 'Myles', 'Naidenoff', 'Najib', 'Nakid', 'Nancarrow', 'Nankoff', 'Nasr', 'Nasser', 'Natsch', 'Naughton', 'Navratil', 'Nenkoff', 'Nesson', 'Newell', 'Newsom', 'Nicholls', 'Nicholson', 'Nicola-Yarred', 'Nieminen', 'Niklasson', 'Nilsson', 'Nirva', 'Niskanen', 'Norman', 'Nosworthy', 'Nourney', 'Novel', 'Nye', 'Nysten', 'Nysveen', "O'Brien", "O'Connell", "O'Connor", "O'Donoghue", "O'Driscoll", "O'Dwyer", "O'Keefe", "O'Leary", "O'Sullivan", 'Odahl', 'Ohman', 'Oliva y Ocana', 'Olsen', 'Olsson', 'Olsvigen', 'Omont', 'Oreskovic', 'Osen', 'Osman', 'Ostby', 'Otter', 'Ovies y Rodriguez', 'Oxenham', 'Padro y Manent', 'Pain', 'Pallas y Castello', 'Palsson', 'Panula', 'Parker', 'Parkes', 'Parr', 'Parrish', 'Partner', 'Pasic', 'Patchett', 'Paulner', 'Pavlovic', 'Payne', 'Peacock', 'Pearce', 'Pears', 'Pedersen', 'Peduzzi', 'Pekoniemi', 'Peltomaki', 'Penasco y Castellana', 'Pengelly', 'Perkin', 'Pernot', 'Perreault', 'Persson', 'Peruschitz', 'Peter', 'Peters', 'Petersen', 'Petranec', 'Petroff', 'Petterson', 'Pettersson', 'Peuchen', 'Phillips', 'Pickard', 'Pinsky', 'Plotcharsky', 'Pokrnic', 'Ponesell', 'Portaluppi', 'Porter', 'Potter', 'Pulbaum', 'Quick', 'Radeff', 'Rasmussen', 'Razi', 'Reed', 'Reeves', 'Rekic', 'Renouf', 'Reuchlin', 'Reynaldo', 'Reynolds', 'Rheims', 'Rice', 'Richard', 'Richards', 'Ridsdale', 'Riihivouri', 'Ringhini', 'Rintamaki', 'Riordan', 'Risien', 'Robbins', 'Robert', 'Robins', 'Roebling', 'Rogers', 'Romaine', 'Rommetvedt', 'Rood', 'Rosblom', 'Rosenbaum', 'Rosenshine', 'Ross', 'Roth', 'Rothes', 'Rothschild', 'Rouse', 'Rowe', 'Rugg', 'Rush', 'Ryan', 'Ryerson', 'Saad', 'Saade', 'Saalfeld', 'Sadlier', 'Sadowitz', 'Saether', 'Sage', 'Sagesser', 'Salander', 'Salkjelsvik', 'Salomon', 'Salonen', 'Samaan', 'Sandstrom', 'Sap', 'Saundercock', 'Sawyer', 'Scanlan', 'Schabert', 'Schmidt', 'Sdycoff', 'Sedgwick', 'Serepeca', 'Seward', 'Sharp', 'Shaughnessy', 'Sheerlinck', 'Shellard', 'Shelley', 'Shine', 'Shorney', 'Shutes', 'Silven', 'Silverthorne', 'Silvey', 'Simmons', 'Simonius-Blumer', 'Sincock', 'Sinkkonen', 'Sirayanian', 'Sirota', 'Sivic', 'Sivola', 'Sjoblom', 'Sjostedt', 'Skoog', 'Slabenoff', 'Slayter', 'Slemen', 'Slocovski', 'Sloper', 'Smart', 'Smiljanic', 'Smith', 'Smyth', 'Snyder', 'Sobey', 'Soholt', 'Somerton', 'Spector', 'Spedden', 'Spencer', 'Spinner', 'Stahelin-Maeglin', 'Staneff', 'Stankovic', 'Stanley', 'Stanton', 'Stead', 'Stengel', 'Stephenson', 'Stewart', 'Stokes', 'Stone', 'Storey', 'Stoytcheff', 'Strandberg', 'Stranden', 'Straus', 'Strilic', 'Strom', 'Sunderland', 'Sundman', 'Sutehall', 'Sutton', 'Svensson', 'Swane', 'Sweet', 'Swift', 'Taussig', 'Taylor', 'Tenglin', 'Thayer', 'Theobald', 'Thomas', 'Thomson', 'Thorne', 'Thorneycroft', 'Tikkanen', 'Tobin', 'Todoroff', 'Tomlin', 'Toomey', 'Torber', 'Torfa', 'Tornquist', 'Toufik', 'Touma', 'Troupiansky', 'Trout', 'Troutt', 'Tucker', 'Turcin', 'Turja', 'Turkula', 'Turpin', 'Uruchurtu', 'Van Impe', 'Van der hoef', 'Vande Velde', 'Vande Walle', 'Vanden Steen', 'Vander Cruyssen', 'Vander Planke', 'Vartanian', 'Veal', 'Vendel', 'Vestrom', 'Vovk', 'Waelens', 'Walcroft', 'Walker', 'Ward', 'Ware', 'Warren', 'Watson', 'Watt', 'Webber', 'Weir', 'Weisz', 'Wells', 'Wenzel', 'West', 'Whabee', 'Wheadon', 'Wheeler', 'White', 'Wick', 'Widegren', 'Widener', 'Wiklund', 'Wilhelms', 'Wilkes', 'Willard', 'Willer', 'Willey', 'Williams', 'Williams-Lambert', 'Wilson', 'Windelov', 'Wirz', 'Wiseman', 'Wittevrongel', 'Woolner', 'Wright', 'Yasbeck', 'Young', 'Youseff', 'Yousif', 'Yousseff', 'Yrois', 'Zabour', 'Zakarian', 'Zimmerman', 'de Brito', 'de Messemaeker', 'de Mulder', 'de Pelsmaeker', 'del Carlo', 'van Billiard', 'van Melkebeke']
+Family members onboard with passenger
+PassengerId
+892     5
+893     1
+894     1
+895     1
+896     2
+897     3
+898     2
+899     3
+900     1
+901     7
+902     1
+903     1
+904     2
+905     3
+906     2
+907     2
+908     3
+909     1
+910     2
+911     1
+912     2
+913     4
+914     1
+915     5
+916     5
+917     2
+918     2
+919     1
+920     1
+921     3
+       ..
+862     3
+863     1
+864    11
+865     1
+866     1
+867     2
+868     1
+869     1
+870     6
+871     1
+872     2
+873     3
+874     1
+875     2
+876     1
+877     4
+878     2
+879     1
+880     1
+881     1
+882     1
+883     1
+884     1
+885     1
+886     6
+887     1
+888     3
+889     4
+890     1
+891     1
+Name: FamilyMemberCount, dtype: int64
+####################################################################################################
+Verify data:
+####################################################################################################
+Basic stats
+               Age         Fare  ParentsAndOrChildren          Sex  \
+count  1309.000000  1309.000000           1309.000000  1309.000000   
+mean     29.432521    33.276193              0.385027     0.644003   
+std      13.163767    51.743584              0.865560     0.478998   
+min       0.170000     0.000000              0.000000     0.000000   
+25%      22.000000     7.895800              0.000000     0.000000   
+50%      29.000000    14.454200              0.000000     1.000000   
+75%      35.500000    31.275000              0.000000     1.000000   
+max      80.000000   512.329200              9.000000     1.000000   
+       SiblingsAndOrSpouse     Survived   Embarked_S   Embarked_C  \
+count          1309.000000  1309.000000  1309.000000  1309.000000   
+mean              0.498854    -0.058060     0.699771     0.206264   
+std               1.041658     0.760044     0.458533     0.404777   
+min               0.000000    -1.000000     0.000000     0.000000   
+25%               0.000000    -1.000000     0.000000     0.000000   
+50%               0.000000     0.000000     1.000000     0.000000   
+75%               1.000000     1.000000     1.000000     0.000000   
+max               8.000000     1.000000     1.000000     1.000000   
+        Embarked_Q  scaled_fares  FamilyMemberCount  
+count  1309.000000  1.309000e+03        1309.000000  
+mean      0.093965 -3.934867e-17           2.277311  
+std       0.291891  1.009967e-01           1.904513  
+min       0.000000 -6.495080e-02           1.000000  
+25%       0.000000 -4.953923e-02           1.000000  
+50%       0.000000 -3.673808e-02           2.000000  
+75%       0.000000 -3.906069e-03           3.000000  
+max       1.000000  9.350492e-01          11.000000  
+####################################################################################################
+Data types
+Age                      float64
+Fare                     float64
+Name                      object
+ParentsAndOrChildren       int64
+Class                   category
+Sex                        int32
+SiblingsAndOrSpouse        int64
+Survived                   int64
+Embarked_S                 int64
+Embarked_C                 int64
+Embarked_Q                 int64
+Title                   category
+fare_categories         category
+scaled_fares             float64
+FamilyID                  object
+FamilyMemberCount          int64
+dtype: object
+####################################################################################################
+Correlations with survival
+Age                    -0.042712
+Fare                    0.081952
+ParentsAndOrChildren    0.028196
+Sex                    -0.226918
+SiblingsAndOrSpouse     0.012470
+Survived                1.000000
+Embarked_S              0.004788
+Embarked_C              0.016591
+Embarked_Q             -0.030528
+scaled_fares            0.081952
+FamilyMemberCount      -0.006298
+Name: Survived, dtype: float64
+####################################################################################################
+Original Train 891, Test 418
+891 418
+target ['Survived']
+features ['Age', 'Fare', 'Name', 'ParentsAndOrChildren', 'Class', 'Sex', 'SiblingsAndOrSpouse', 'Embarked_S', 'Embarked_C', 'Embarked_Q', 'Title', 'fare_categories', 'scaled_fares', 'FamilyID', 'FamilyMemberCount']
+####################################################################################################
+Final Features:
+features ['Age', 'Fare', 'Name', 'ParentsAndOrChildren', 'Class', 'Sex', 'SiblingsAndOrSpouse', 'Embarked_S', 'Embarked_C', 'Embarked_Q', 'Title', 'fare_categories', 'scaled_fares', 'FamilyID', 'FamilyMemberCount']
+####################################################################################################
+Print number of samples saved in training data 891
+Print column list in saved training data ['Age', 'Fare', 'Name', 'ParentsAndOrChildren', 'Class', 'Sex', 'SiblingsAndOrSpouse', 'Survived', 'Embarked_S', 'Embarked_C', 'Embarked_Q', 'Title', 'fare_categories', 'scaled_fares', 'FamilyID', 'FamilyMemberCount']

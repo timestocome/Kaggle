@@ -10,11 +10,13 @@ Each segment measures 0.0375 seconds so any solution will have to create feature
 #### Things that didn't work:
 LSTM, RNNs - it's not really that kind of a problem
 
-Breaking segments into smaller parts
+Spectrograms - not enough data for a CNN
 
-Breaking segments into separate quakes (16 ) before splitting into segemnts
+Breaking segments into smaller parts - overfitting
 
-Augmenting data by: overlapping segments, adding noise
+Breaking segments into separate quakes (16 ) before splitting into segemnts - idk? 
+
+Augmenting data by: overlapping segments, adding noise - model answers were terrible
 
 
 #### Things that did work:

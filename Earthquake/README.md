@@ -66,6 +66,13 @@ Winning score:
 
 My scores:
 
+### Models:
+Models: 
+- Ensemble Random Forest Regressor ( Small feature set submission )
+- XGBoost Model predictions then fed into a Linear Regression model (Stacked Model)
+- (XGBoost Few Features)
+- (XGBoost Full Features, no stack)
+I'll upload this at end of contest next week
 
 
 

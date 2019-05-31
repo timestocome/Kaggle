@@ -22,7 +22,7 @@ LSTM, RNNs - it's not really that kind of a problem
 
 Spectrograms - not enough data to train a CNN
 
-Histograms - this was disapointed it was a big help with stock market predictions
+Histograms - this was disappointing it was a big help with stock market predictions
 
 Breaking segments into smaller parts, overlapping segments at a step of 75k caused overfitting. One contestant temporarily gained first place with random selections but that didn't work for me.
 

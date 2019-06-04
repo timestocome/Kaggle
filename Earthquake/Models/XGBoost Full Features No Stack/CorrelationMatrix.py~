@@ -1,0 +1,15 @@
+
+
+# https://github.com/timestocome
+# https://www.kaggle.com/c/LANL-Earthquake-Prediction
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+# read in train data feature file
+train = pd.read_csv('train_stats.csv', index_col=0)
+
+print(train.head())
+

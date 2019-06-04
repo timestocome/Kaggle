@@ -13,7 +13,7 @@ several quakes to prevent people lining them up and manually entering time to fa
 Each segment measures 0.0375 seconds so any solution will have to create features and make predictions quickly to be useful
 
 My most successful models used a small feature set with XGBoost. (power, deviation from mean, number of zero crossings)
-Others found slope trend to be useful
+Others found slope trend to be useful, added white noise, blended models
 
 #### Things that didn't work for me:
 LSTM, RNNs - it's not really that kind of a problem

@@ -62,9 +62,9 @@ MAE tends to push the predictions towards the mean more strongly than other erro
 
 
 #### Scores:
-Winning score:
+Winning score: 2.26589
 
-My scores:
+My score: 2.56844 ( top 27% ) 
 
 ### Models:
 Models: 

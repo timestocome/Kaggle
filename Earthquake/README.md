@@ -12,7 +12,8 @@ several quakes to prevent people lining them up and manually entering time to fa
 
 Each segment measures 0.0375 seconds so any solution will have to create features and make predictions quickly to be useful
 
-The most successful models used a small feature set with XGBoost. (power, deviation from mean, number of zero crossings )
+My most successful models used a small feature set with XGBoost. (power, deviation from mean, number of zero crossings)
+Others found slope trend to be useful
 
 #### Things that didn't work for me:
 LSTM, RNNs - it's not really that kind of a problem
@@ -72,7 +73,6 @@ Models:
 - XGBoost Model predictions then fed into a Linear Regression model (Stacked Model)
 - (XGBoost Few Features)
 - (XGBoost Full Features, no stack)
-I'll upload this at end of contest next week
 
 
 

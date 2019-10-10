@@ -3,6 +3,23 @@
 
 # * https://github.com/timestocome
 # 
+#     
+# This problem is just a slight variation on MNIST. It's a different number set and there is a labeled 
+# training set, a labeled holdout set and an unlabeled set for submitting to Kaggle.
+# 
+# What makes it interesting is that all 3 sets of integers have different std, means
+# 
+# The best way to solve this problem is to augment the data, shift and scale the training data to match the 
+# holdout and or submission set and run it through a convolutional network. Using all the 40,000 training data,
+# augmenting it and using a standard convolutional network will score 98%
+# 
+# But what if that wasn't an option? Using only 4000 labeled samples of 40,000 in the set and 4000 unlabeled samples accuracy can hit 81%
+# 
+# Using a Semi-Supervised GAN gives 5% better accuracy than the conventional method if you only have a limited amount of labeled data 
+# 
+
+# 
+# 
 # 
 # # Kannada MNIST Semi-Supervised GAN
 # 
@@ -10,6 +27,9 @@
 # * Holdout and Submission imgs vary from test data in std, mean
 # 
 # While the GAN slightly outperforms a stardard Supervised FF Conv on Test Data that differs from Training Data it's not by a large amount. Augmenting data and shifting the std and mean to match Test Data is probably a better option
+# 
+# 
+# ### Use labeled and unlabeled data from the training set ( same std, mean )
 # 
 # |n_train samples| GAN validation | GAN holdout | Supervised validation | Supervised holdout |
 # | --- | --- | --- | --- | --- |
@@ -24,6 +44,22 @@
 # | 12000 | 99% | 75% | 99% | 74% | 
 # 
 # 
+# ### Use unlabeled holdout set as unlabeled data for GAN ( different std, mean) check against unlabeled set
+# 
+# |n_train samples| GAN validation | GAN holdout |
+# | --- | --- | --- | 
+# | 1000 | 98% | 79% |
+# | 2000 | 98% | 78% | 
+# | 3000 | 98% | % | 
+# | 4000 | 98% | 80% | 
+# | 5000 | 99% | % | 
+# | 6000 | 99% | 81% | 
+# | 8000 | 99% | % | 
+# | 10000 | 99% | 72% | 
+# | 12000 | 99% | % | 
+# 
+# ### Use Submission as unlabeled, check against holdout labeled data (all sets have diff std, mean) 
+# 4000 training samples yeilds 73% accuracy
 # 
 # 
 # 
@@ -48,7 +84,7 @@
 # 
 # 
 
-# In[ ]:
+# In[1]:
 
 
 # silence is golden
@@ -59,7 +95,7 @@ warnings.filterwarnings(action="ignore",category=DeprecationWarning)
 warnings.filterwarnings(action="ignore",category=FutureWarning)
 
 
-# In[ ]:
+# In[2]:
 
 
 # hack to make keras work with 2*** series gpus
@@ -70,7 +106,7 @@ config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 
 
-# In[ ]:
+# In[3]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -92,7 +128,7 @@ from keras.optimizers import Adam
 from keras.utils import to_categorical
 
 
-# In[ ]:
+# In[4]:
 
 
 # Kannada MNIST dataset ~ 60,000 samples
@@ -102,36 +138,72 @@ from keras.utils import to_categorical
 # find labeled data, split out 100 samples for training
 
 
-train = pd.read_csv('../input/train.csv')
-test = pd.read_csv('../input/test.csv')
-holdout = pd.read_csv('../input/Dig-MNIST.csv')
+train = pd.read_csv('input/train.csv')
+test = pd.read_csv('input/test.csv')
+holdout = pd.read_csv('input/Dig-MNIST.csv')
 
 
 # label, image
-#print('train', train.shape)
-#print(train.columns)
-#print(train.head())
+print('train', train.shape)
+print(train.columns)
 
 
 # id, image
-#print('test', test.shape)
-#print(test.columns)
-#print(test.head())
+print('test', test.shape)
+print(test.columns)
 
 
 # label, image
-#print('holdout', holdout.shape)
-#print(holdout.columns)
-#print(holdout.head())
+print('holdout', holdout.shape)
+print(holdout.columns)
 
 
-# In[ ]:
+# In[5]:
+
+
+
+def show_imgs(df, n):
+
+    fig, ax = plt.subplots(n, 10)
+    
+    for i in range(n):
+        for j in range(10):
+            r = np.random.randint(0, len(df))
+            number = df.iloc[r].values.reshape((28,28))
+            ax[i][j].imshow(number, cmap=plt.cm.binary)
+            ax[i][j].axis('off')
+            
+    plt.subplots_adjust(wspace=0, hspace=0)        
+    fig.set_figwidth(15)
+    fig.set_figheight(7)
+    fig.show()
+    
+    
+    
+print('Train')    
+train_imgs = train.drop(columns=['label'])
+show_imgs(train_imgs, 6)
+
+print('Test')
+test_imgs = test.drop(columns=['id'])
+show_imgs(test_imgs, 6)
+
+print('Holdout')
+holdout_imgs = holdout.drop(columns=['label'])
+show_imgs(holdout_imgs, 6)
+    
+    
+    
+    
+
+
+# In[6]:
 
 
 # split into x image, y label, train -> train/validate
 
 # this is the labeled part of the training set, rest of training data is held aside
-num_labeled = 6000
+num_labeled = 4000
 
 
 # shuffle train set
@@ -171,7 +243,58 @@ print('submission', x_submission.shape)
 print('holdout', x_holdout.shape, y_holdout.shape)
 
 
-# In[ ]:
+# In[7]:
+
+
+# shift and scale image data
+def scale_shift(x):
+    return x / 255.
+    #return (x-127.5)/(2 * x.std())
+
+
+
+x_train_unlabeled = scale_shift(x_train_unlabeled)
+x_train_labeled = scale_shift(x_train_labeled)
+x_validate = scale_shift(x_validate)
+x_holdout = scale_shift(x_holdout)
+x_submission = scale_shift(x_submission)
+
+
+
+print(x_train_unlabeled.std(), x_train_labeled.std(), x_validate.std(), x_holdout.std(), x_submission.std())
+print(x_train_unlabeled.mean(), x_train_labeled.mean(), x_validate.mean(), x_holdout.mean(), x_submission.mean())
+print(x_train_unlabeled.min(), x_train_labeled.min(), x_validate.min(), x_holdout.min(), x_submission.min())
+print(x_train_unlabeled.max(), x_train_labeled.max(), x_validate.max(), x_holdout.max(), x_submission.max())
+
+
+
+# In[8]:
+
+
+
+
+# Expand image dimensions to width x height x channels
+def reshape_img_data(x):
+    return np.expand_dims(x, axis=3)
+
+
+print(x_train_unlabeled.shape, x_train_labeled.shape, x_validate.shape, x_holdout.shape, x_submission.shape)
+
+
+
+# labels
+def reshape_labels(y):
+    return y.reshape(-1, 1)
+    
+y_train_unlabeled = reshape_labels(y_train_unlabeled)
+y_train_labeled = reshape_labels(y_train_labeled)
+y_validate = reshape_labels(y_validate)
+y_holdout = reshape_labels(y_holdout)
+
+print(y_train_unlabeled.shape, y_train_labeled.shape, y_validate.shape, y_holdout.shape)
+
+
+# In[9]:
 
 
 # train labels 0..9, equal numbers of each
@@ -186,64 +309,7 @@ print(y_holdout.min(), y_holdout.max())
 print(np.unique(y_holdout, return_counts=True))
 
 
-# In[ ]:
-
-
-# check image data
-# original
-# 0 255 20.98506292517007 0.0 61.651160617260885
-# 0 255 28.725469098772322 0.0 72.93217267514069
-# 0 255 18.516213265306124 0.0 57.48610134940895
-
-# center data between -1, 1
-def scale_img_data(img):
-    return (img - 127.5) / 127.5
-    
-x_train_labeled = scale_img_data(x_train_labeled)
-x_train_unlabeled = scale_img_data(x_train_unlabeled) 
-x_validate = scale_img_data(x_validate)
-x_holdout = scale_img_data(x_holdout)
-x_submission = scale_img_data(x_submission)
-
-                                 
-                                 
-                                 
-                                 
-print('notice difference in std and median between training and holdout/validation data')
-print(np.min(x_train_labeled), np.max(x_train_labeled), np.mean(x_train_labeled), np.median(x_train_labeled), np.std(x_train_labeled))
-print(np.min(x_train_unlabeled), np.max(x_train_unlabeled), np.mean(x_train_unlabeled), np.median(x_train_unlabeled), np.std(x_train_unlabeled))
-print(np.min(x_holdout), np.max(x_holdout), np.mean(x_holdout), np.median(x_holdout), np.std(x_holdout))
-print(np.min(x_submission), np.max(x_submission), np.mean(x_submission), np.median(x_submission), np.std(x_submission))
-
-
-# In[ ]:
-
-
-#  # Expand image dimensions to width x height x channels
-def reshape_img_data(x):
-    return np.expand_dims(x, axis=3)
-
-x_train_unlabeled = reshape_img_data(x_train_unlabeled)
-x_train_labeled = reshape_img_data(x_train_labeled)
-x_validate = reshape_img_data(x_validate)
-x_holdout = reshape_img_data(x_holdout)
-x_submission = reshape_img_data(x_submission)
-
-print(x_train_unlabeled.shape, x_train_labeled.shape, x_validate.shape, x_holdout.shape, x_submission.shape)
-
-# labels
-def reshape_labels(y):
-    return y.reshape(-1, 1)
-    
-y_train_unlabeled = reshape_labels(y_train_unlabeled)
-y_train_labeled = reshape_labels(y_train_labeled)
-y_validate = reshape_labels(y_validate)
-y_holdout = reshape_labels(y_holdout)
-
-print(y_train_unlabeled.shape, y_train_labeled.shape, y_validate.shape, y_holdout.shape)
-
-
-# In[ ]:
+# In[10]:
 
 
 img_rows = 28
@@ -260,7 +326,7 @@ z_dim = 100
 num_classes = 10
 
 
-# In[ ]:
+# In[11]:
 
 
 
@@ -348,7 +414,45 @@ def submission_set():
     imgs = imgs.reshape(len(imgs), img_rows, img_cols, 1)
 
     return imgs
+
+
+
+
+######################################################################
+# experimental
+# use unlabeled holdout and validation data as unlabeled instead of part
+#    of the training set
+    
+# random batch unlabeled train data    
+def batch_holdout(batch_size):
         
+    x = x_holdout
+        
+    # Get a random batch of unlabeled images
+    idx = np.random.randint(num_labeled, x.shape[0], batch_size)
+    imgs = x[idx]
+    
+    imgs = imgs.reshape(batch_size, img_rows, img_cols, 1)
+
+        
+    return imgs
+
+
+    
+# random batch unlabeled train data    
+def batch_submission(batch_size):
+        
+    x = x_submission
+        
+        
+    # Get a random batch of unlabeled images
+    idx = np.random.randint(num_labeled, x.shape[0], batch_size)
+    imgs = x[idx]
+    
+    imgs = imgs.reshape(batch_size, img_rows, img_cols, 1)
+
+        
+    return imgs
 
 
 # # Semi-Supervied GAN
@@ -357,7 +461,7 @@ def submission_set():
 
 # ### Generator
 
-# In[ ]:
+# In[12]:
 
 
 # model takes in a random noise vector of z_dim and learns to output a digit
@@ -396,7 +500,7 @@ def build_generator(z_dim):
 
 # ### Discriminator
 
-# In[ ]:
+# In[13]:
 
 
 # takes input image and classifies it from 0...9
@@ -446,7 +550,7 @@ def build_discriminator_net(img_shape):
     return model
 
 
-# In[ ]:
+# In[14]:
 
 
 # discriminator to label class
@@ -459,7 +563,7 @@ def build_discriminator_supervised(discriminator_net):
     return model
 
 
-# In[ ]:
+# In[15]:
 
 
 # discriminator to id real/fake image
@@ -482,7 +586,7 @@ def build_discriminator_unsupervised(discriminator_net):
 
 # ## Build the Model
 
-# In[ ]:
+# In[16]:
 
 
 def build_gan(generator, discriminator):
@@ -498,7 +602,7 @@ def build_gan(generator, discriminator):
 
 # ### Discriminator
 
-# In[ ]:
+# In[17]:
 
 
 # Core Discriminator network:
@@ -518,7 +622,7 @@ discriminator_unsupervised.compile(loss='binary_crossentropy', optimizer=Adam())
 
 # ### Generator
 
-# In[ ]:
+# In[18]:
 
 
 # Build the Generator
@@ -535,7 +639,7 @@ gan.compile(loss='binary_crossentropy', optimizer=Adam())
 
 # ## Training
 
-# In[ ]:
+# In[19]:
 
 
 supervised_losses = []
@@ -560,9 +664,12 @@ def train(iterations, batch_size, sample_interval):
 
         # Get labeled examples
         imgs, labels = batch_labeled(batch_size)
-
+        
+############################################################################
         # Get unlabeled examples
-        imgs_unlabeled = batch_unlabeled(batch_size)
+        #imgs_unlabeled = batch_unlabeled(batch_size)
+        #imgs_unlabeled = batch_holdout(batch_size)
+        imgs_unlabeled = batch_submission(batch_size)
 
         # Generate a batch of fake images
         z = np.random.normal(0, 1, (batch_size, z_dim))
@@ -607,11 +714,11 @@ def train(iterations, batch_size, sample_interval):
 
 # Note that the `'Discrepancy between trainable weights and collected trainable'` warning from Keras is expected. It is by design: The Generator's trainable parameters are intentionally held constant during Discriminator training, and vice versa.
 
-# In[ ]:
+# In[20]:
 
 
 # Set hyperparameters
-n_epochs = 5000
+n_epochs = 10000
 batch_size = 32
 sample_interval = 10
 
@@ -619,7 +726,7 @@ sample_interval = 10
 train(n_epochs, batch_size, sample_interval)
 
 
-# In[ ]:
+# In[21]:
 
 
 losses = np.array(supervised_losses)
@@ -639,7 +746,7 @@ plt.legend()
 # ## SGAN Classifier – Training, Test, Holdout Accuracy 
 # 
 
-# In[ ]:
+# In[22]:
 
 
 # compute training data accuaracy
@@ -649,7 +756,7 @@ _, accuracy = discriminator_supervised.evaluate(x, y)
 print("Test Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[23]:
 
 
 # compute validation data accuaracy
@@ -659,7 +766,7 @@ _, accuracy = discriminator_supervised.evaluate(x, y)
 print("Test Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[24]:
 
 
 # compute holdout data accuracy
@@ -669,7 +776,7 @@ _, accuracy = discriminator_supervised.evaluate(x, y)
 print("Test Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[25]:
 
 
 # create Kaggle submission data
@@ -690,7 +797,7 @@ print(gan_preds)
 # * use same number of labeled samples
 # * see diff in number of training epoches needed
 
-# In[ ]:
+# In[26]:
 
 
 # Fully supervised classifier with the same network architecture as the SGAN Discriminator
@@ -698,7 +805,7 @@ mnist_classifier = build_discriminator_supervised(build_discriminator_net(img_sh
 mnist_classifier.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=Adam())
 
 
-# In[ ]:
+# In[27]:
 
 
 imgs, labels = batch_labeled(num_labeled)
@@ -715,7 +822,7 @@ losses = training.history['loss']
 accuracies = training.history['acc']
 
 
-# In[ ]:
+# In[28]:
 
 
 # Plot classification loss
@@ -725,7 +832,7 @@ plt.title("Classification Loss")
 plt.legend()
 
 
-# In[ ]:
+# In[29]:
 
 
 # check training data accuracy
@@ -735,7 +842,7 @@ _, accuracy = mnist_classifier.evaluate(x, y)
 print("Training Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[30]:
 
 
 # check validation data accuracy
@@ -745,7 +852,7 @@ _, accuracy = mnist_classifier.evaluate(x, y)
 print("Test Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[31]:
 
 
 # check holdout data accuracy
@@ -755,7 +862,7 @@ _, accuracy = mnist_classifier.evaluate(x, y)
 print("Test Accuracy: %.2f%%" % (100 * accuracy))
 
 
-# In[ ]:
+# In[32]:
 
 
 # create Kaggle submission data
